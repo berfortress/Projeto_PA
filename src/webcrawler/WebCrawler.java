@@ -28,13 +28,53 @@ public class WebCrawler {
         public int maxPagesToSearch;
         private final Graph<PageTitle, Hyperlinks> graph;
 
+    private Vertex<PageTitle> checkPageTitle(PageTitle page) throws PageTitleException {
+        if( page == null) throw new PageTitleException("Page title cannot be null");
+
+        Vertex<PageTitle> find = null;
+        for (Vertex<PageTitle> v : graph.vertices()) {
+            if( v.element().equals(page)) { //equals was overriden in PageTitle!!
+                find = v;
+            }
+        }
+
+        if( find == null) 
+            throw new WebCrawlerException("Website with name " + page.getPageTitleName() + " does not exist");
+
+        return find;
+    }
+        
+    public void addPageTitle(PageTitle page) throws PageTitleException{
+        Vertex<PageTitle> page1 = checkPageTitle(page);
+        try {
+            graph.insertVertex(page1.element());
+        } catch (InvalidVertexException e) {
+            throw new PageTitleException("Website with name " + page.getPageTitleName() + " does not exist");
+        }
+    }
+    
+    public void addHyperLinks(PageTitle page1, PageTitle page2, Hyperlinks link) 
+        throws PageTitleException{
+        
+        if( link == null) throw new PageTitleException("Hyper link is null");
+        
+        Vertex<PageTitle> a1 = checkPageTitle(page1);
+        Vertex<PageTitle> a2 = checkPageTitle(page2);
+        
+        try {
+            graph.insertEdge(a1, a2, link);
+        } catch (InvalidVertexException e) {
+            throw new PageTitleException("The Hyper link " + link.toString() + " already exists");
+        }
+    }
+        
     public WebCrawler(int maxPagesToSearch) {
         this.maxPagesToSearch = maxPagesToSearch;
         this.graph = new GraphEdgeList<>();
     }
 
     public WebCrawler() {
-        this.maxPagesToSearch = 4;
+        this.maxPagesToSearch = 100;
         this.graph = new GraphEdgeList<>();
     }
     
