@@ -29,6 +29,7 @@ public class WebCrawler {
         private final Graph<PageTitle, Hyperlinks> graph;
 
     private Vertex<PageTitle> checkPageTitle(PageTitle page) throws PageTitleException {
+        
         if( page == null) throw new PageTitleException("Page title cannot be null");
 
         Vertex<PageTitle> find = null;
@@ -39,7 +40,7 @@ public class WebCrawler {
         }
 
         if( find == null) 
-            throw new WebCrawlerException("Website with name " + page.getPageTitleName() + " does not exist");
+            throw new PageTitleException("Website with name " + page.getPageTitleName() + " does not exist");
 
         return find;
     }
