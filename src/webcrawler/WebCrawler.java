@@ -34,7 +34,7 @@ public class WebCrawler {
     }
 
     public WebCrawler() {
-        this.maxPagesToSearch = 100;
+        this.maxPagesToSearch = 4;
         this.graph = new GraphEdgeList<>();
     }
     
