@@ -29,7 +29,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         WebCrawler wc = new WebCrawler(2);
         //opendUrlAndShowTitleAndLinks("https://jsoup.org/");
-//        wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
+        //wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
         wc.search("https://v1.mrpiracy.top/");
         System.out.println("FABI ESTUDA");
     }
