@@ -15,6 +15,7 @@ import adtgraph.Digraph;
 import adtgraph.GraphEdgeList;
 import adtgraph.InvalidVertexException;
 import adtgraph.Vertex;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import enums.TypeModel;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,8 +29,9 @@ import java.util.logging.Logger;
  * @author berna
  */
 public class WebCrawler {
-        private Set<PageTitle> pagesVisited = new HashSet<PageTitle>();
-	private List<Hyperlinks> pagesToVisit = new LinkedList<Hyperlinks>();
+        private Set<String> pagesVisited = new HashSet<String>();
+        private List<PageTitle> pageTitle = new LinkedList<PageTitle>();
+	private List<Hyperlinks> links = new LinkedList<Hyperlinks>();
         private List<Hyperlinks> pagesNotFound = new LinkedList<Hyperlinks>();
         public int maxPagesToSearch;
         private final Graph<PageTitle, Hyperlinks> graph;
@@ -82,28 +84,38 @@ public class WebCrawler {
         this.maxPagesToSearch = maxPagesToSearch;
     }
     
+    public Iterable<Vertex<PageTitle>> getAllPageTitle(){
+        return graph.vertices();
+    }
+    
     private String nextUrl() {
         String nextUrl;
         do {
-                nextUrl = this.pagesToVisit.remove(0).getLinkName();
+                nextUrl = this.links.remove(0).getLinkName();
         } while (this.pagesVisited.contains(nextUrl));
         this.pagesVisited.add(nextUrl);
         return nextUrl;
     }
 	
-    public void search(String url) throws IOException{
+    public void search(String url) throws IOException, PageTitleException{
         while (this.pagesVisited.size() < getMaxPagesToSearch()) {
                 String currentUrl;
                 SpiderLeg wc = new SpiderLeg();		
-                if (this.pagesToVisit.isEmpty()) {
+                if (this.links.isEmpty()) {
                         currentUrl = url;
                         this.pagesVisited.add(url);
                 } else {
                         currentUrl = this.nextUrl();
                 }
-                wc.openUrlAndShowTitleAndLinks(currentUrl, pagesVisited, pagesToVisit, pagesNotFound);// Lots of stuff happening here. Look at the crawl method in SpiderLeg
-                this.pagesToVisit.addAll(wc.getLinks());
-                this.pagesNotFound.addAll(wc.getLinksNotFound());
+                wc.openUrlAndShowTitleAndLinks(currentUrl, pageTitle, links, pagesNotFound);// Lots of stuff happening here. Look at the crawl method in SpiderLeg
+        }
+        
+        for(PageTitle p : pageTitle){
+            try {
+                addPageTitle(p);
+            } catch (InvalidVertexException ex) {
+                throw new PageTitleException("Website with name does not exist");
+            }
         }
     }
         
@@ -148,27 +160,27 @@ public class WebCrawler {
     
     @Override
     public String toString() {
-        String str = "\nFLIGHT PLANER (" + graph.numVertices() + "Airports | "+ graph.numEdges() + "Flights)\n";
+        String str = "\nWEB CRAWLER( " + graph.numVertices() + " Pages Title | "+ graph.numEdges() + " Hyperlinks)\n";
 
-        for (Vertex<PageTitle> p1 : graph.vertices()) {
-            for (Vertex<PageTitle> p2 : graph.vertices()) {
-                if (p1.equals(p2)) {
-                    //System.out.println("\t sem Rotas \n");
-                    break;
-                }
-                str += "\n" + p2.element().toString() + " TO " + p1.element().toString();
-                try {
-                    if(getHyperlinksesBetween(p1.element(), p2.element()).isEmpty()){
-                        str += "\n\t(no flights)\n";
-                    }else{
-                        str += "\n\t" + p2.element().toString() + "\n";
-                        str += "\t" + p1.element().toString() + "\n";
-                    }
-                } catch (PageTitleException ex) {
-                    Logger.getLogger(WebCrawler.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                }
-            }
+//        for (Vertex<PageTitle> p1 : graph.vertices()) {
+//            for (Vertex<PageTitle> p2 : graph.vertices()) {
+//                if (p1.equals(p2)) {
+//                    //System.out.println("\t sem Rotas \n");
+//                    break;
+//                }
+//                str += "\n" + p2.element().toString() + " TO " + p1.element().toString();
+//                try {
+//                    if(getHyperlinksesBetween(p1.element(), p2.element()).isEmpty()){
+//                        str += "\n\t(no flights)\n";
+//                    }else{
+//                        str += "\n\t" + p2.element().toString() + "\n";
+//                        str += "\t" + p1.element().toString() + "\n";
+//                    }
+//                } catch (PageTitleException ex) {
+//                    Logger.getLogger(WebCrawler.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                }
+//            }
         return str;
     }
     
