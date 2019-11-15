@@ -9,7 +9,7 @@ package webcrawler;
  *
  * @author fabio
  */
-class PageTitleException extends Exception {
+public class PageTitleException extends Exception {
     public PageTitleException(String string) {
         super(string);
     }

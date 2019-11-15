@@ -10,12 +10,12 @@ package webcrawler;
  * @author berna
  */
 public class PageTitle {
-    private final int id = 0;
+    private int id = 0;
     private String pageTitleName;
 
 
-    public PageTitle(int id, String pageTitleName) {
-        id ++;
+    public PageTitle(String pageTitleName) {
+        this.id = id++;
         this.pageTitleName = pageTitleName;
     }
 

@@ -13,19 +13,21 @@ import java.util.Objects;
  */
 public class Hyperlinks {
     private static int id = 0;
-    private final double cost;
     private final double distance;
+    private String linkName;
 
-    public Hyperlinks(double cost, double distance) {
+    public Hyperlinks(String linkName) {
         this.id ++;
-        this.cost = cost;
-        this.distance = distance;
+        this.linkName = linkName;
+        this.distance = 0;
     }
 
-    
+    public String getLinkName() {
+        return linkName;
+    }
 
-    public double getCost() {
-        return cost;
+    public void setLinkName(String linkName) {
+        this.linkName = linkName;
     }
 
     public double getDistance() {
@@ -54,9 +56,6 @@ public class Hyperlinks {
         }
         final Hyperlinks other = (Hyperlinks) obj;
         if (this.id != other.getId()) {
-            return false;
-        }
-        if (this.cost != other.cost) {
             return false;
         }
         if (this.distance != other.distance) {
