@@ -11,11 +11,12 @@ package webcrawler;
  */
 public class PageTitle {
     private int id = 0;
+    private static int count = 0;
     private String pageTitleName;
 
 
     public PageTitle(String pageTitleName) {
-        this.id = id++;
+        this.id = ++count;
         this.pageTitleName = pageTitleName;
     }
 

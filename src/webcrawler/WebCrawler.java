@@ -96,6 +96,10 @@ public class WebCrawler {
         this.pagesVisited.add(nextUrl);
         return nextUrl;
     }
+    
+    public List<Hyperlinks> getLinks(){
+        return links;
+    }
 	
     public void search(String url) throws IOException, PageTitleException{
         while (this.pagesVisited.size() < getMaxPagesToSearch()) {
@@ -115,6 +119,16 @@ public class WebCrawler {
                 addPageTitle(p);
             } catch (InvalidVertexException ex) {
                 throw new PageTitleException("Website with name does not exist");
+            }
+        }
+        test();
+    }
+    
+    public void test() throws PageTitleException{
+        for(int i = pageTitle.size() - 1; i >= 0; i--){
+            for(int j = 0; j < pageTitle.size() - 1 - i; j++){
+                for(int n = 0; n < links.size() - i; n++)
+                    addHyperLinks(pageTitle.get(i), pageTitle.get(j), links.get(n));
             }
         }
     }

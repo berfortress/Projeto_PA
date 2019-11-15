@@ -61,6 +61,8 @@ public class Main {
         
         System.out.println(wc.getAllPageTitle());
         System.out.println(wc.toString());
+        for(Hyperlinks h : wc.getLinks())
+            System.out.println(h.getLinkName()+"\n");
     }
 }
 

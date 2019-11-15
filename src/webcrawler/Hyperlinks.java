@@ -12,12 +12,13 @@ import java.util.Objects;
  * @author berna
  */
 public class Hyperlinks {
-    private static int id = 0;
+    private int id = 0;
+    private static int count = 0; 
     private final double distance;
     private String linkName;
 
     public Hyperlinks(String linkName) {
-        this.id ++;
+        this.id = ++count;
         this.linkName = linkName;
         this.distance = 0;
     }
@@ -34,7 +35,7 @@ public class Hyperlinks {
         return distance;
     }
 
-    public static int getId() {
+    public int getId() {
         return id;
     }
 
