@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 /**
  *
- * @author berna
+ * @author bernardo
  */
 public class PageTitle {
     private int id = 0;

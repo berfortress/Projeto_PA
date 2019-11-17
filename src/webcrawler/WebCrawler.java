@@ -5,19 +5,13 @@
  */
 package webcrawler;
 
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import adtgraph.Edge;
 import adtgraph.Graph;
-import adtgraph.Digraph;
 import adtgraph.GraphEdgeList;
 import adtgraph.InvalidEdgeException;
 import adtgraph.InvalidVertexException;
 import adtgraph.Vertex;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
-import enums.TypeModel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,41 +22,26 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author berna
+ * @author bernardo
  */
 public class WebCrawler {
-        private Set<PageTitle> pageTitle;
+        private List<PageTitle> pageTitle;
 	private List<Hyperlinks> links;
         private int maxPagesToSearch;
         private final Graph<PageTitle, Hyperlinks> graph;
-
-    private Vertex<PageTitle> checkPageTitle(PageTitle page) throws PageTitleException {
-        
-        if( page == null) throw new PageTitleException("Page title cannot be null");
-
-        Vertex<PageTitle> find = null;
-        for (Vertex<PageTitle> v : graph.vertices()) {
-            if( v.element().equals(page)) { //equals was overriden in PageTitle!!
-                find = v;
-            }
-        }
-
-        if( find == null) 
-            throw new PageTitleException("Website with name " + page.getPageTitleName() + " does not exist");
-
-        return find;
-    }
     
     public WebCrawler(int maxPagesToSearch) {
-        this.links = new ArrayList<Hyperlinks>();
         this.maxPagesToSearch = maxPagesToSearch;
         this.graph = new GraphEdgeList<>();
-        this.pageTitle = new HashSet<PageTitle>();
+        this.pageTitle = new ArrayList<>();
+        this.links = new ArrayList<>();
     }
 
     public WebCrawler() {
         this.maxPagesToSearch = 4;
         this.graph = new GraphEdgeList<>();
+        this.pageTitle = new ArrayList<>();
+        this.links = new ArrayList<>();
     }
     
     public int getMaxPagesToSearch() {
@@ -117,11 +96,11 @@ public class WebCrawler {
                 }
         }
         
-        System.out.println("\t Links: (" + links.size() + ")");
-        
-        for (int i = 0; i < links.size(); i++) {
-            System.out.println("\t \t " + "[" + links.get(i).getName().toUpperCase() + "]" + " " + links.get(i).getLink());
-        }
+//        System.out.println("\t Links: (" + links.size() + ")");
+//        
+//        for (int i = 0; i < links.size(); i++) {
+//            System.out.println("\t \t " + "[" + links.get(i).getName().toUpperCase() + "]" + " " + links.get(i).getLink());
+//        }
         
         for(PageTitle p : pageTitle){
             try {
@@ -131,41 +110,22 @@ public class WebCrawler {
             }
         }
         
-        List<PageTitle> list = new ArrayList<PageTitle>(pageTitle);
-        
         for (int i = 0; i < links.size(); i++) {
-            try {
-                addPageTitle(new PageTitle(links.get(i).getName()));
-                list.add(new PageTitle(links.get(i).getName()));
-            } catch (InvalidVertexException ex) {
-                throw new PageTitleException("Website with name does not exist");
-            }
+                PageTitle title = new PageTitle(links.get(i).getName());
+                addPageTitle(title);
+                pageTitle.add(title);
         }
         
-        System.out.println(list);
-        
-        for(Hyperlinks l : links){
-            try {
-                for (int i = 0; i < links.size(); i++) {
-                     //System.out.println(list.get(0) + " " + links.get(i).getName() + " " + links.get(i));
-                     addHyperLinks(list.get(0), list.get(i),links.get(i));
-                }
-            } catch (InvalidEdgeException ex) {
-                throw new HyperlinksException("Link with the name does not exist");
+        try {
+            int count = 1;
+            for(int j = 0; j < links.size(); j++){
+                addHyperLinks(pageTitle.get(0), pageTitle.get(count++), links.get(j));
             }
+        } catch (InvalidEdgeException ex) {
+            throw new HyperlinksException("Link with the name does not exist");
         }
     }
-    
-//    public void test() throws PageTitleException{
-//        List<Hyperlinks> linksList = new ArrayList<Hyperlinks>(links);
-//        List<PageTitle> pageList = new ArrayList<PageTitle>(pageTitle);
-//        for(int i = pageTitle.size() - 1; i >= 0; i--){
-//            for(int j = 0; j < pageTitle.size() - 1 - i; j++){
-//                for(int n = 0; n < links.size() - i; n++)
-//                    addHyperLinks(pageList.get(i), pageList.get(j), linksList.get(n));
-//            }
-//        }
-//    }
+
         
     public void addPageTitle(PageTitle page) throws PageTitleException{
         try {
@@ -175,10 +135,9 @@ public class WebCrawler {
         }
     }
     
-    public void addHyperLinks(PageTitle page1, PageTitle page2, Hyperlinks link) 
-        throws PageTitleException{
+    public void addHyperLinks(PageTitle page1, PageTitle page2, Hyperlinks link) throws PageTitleException{
         
-        if( link == null) throw new PageTitleException("Hyper link is null");
+        if(link == null) throw new PageTitleException("Hyper link is null");
         
         Vertex<PageTitle> a1 = checkPageTitle(page1);
         Vertex<PageTitle> a2 = checkPageTitle(page2);
@@ -188,6 +147,23 @@ public class WebCrawler {
         } catch (InvalidVertexException e) {
             throw new PageTitleException("The Hyperlink " + link.toString() + " already exists");
         }
+    }
+    
+        private Vertex<PageTitle> checkPageTitle(PageTitle page) throws PageTitleException {
+        
+        if( page == null) throw new PageTitleException("Page title cannot be null");
+
+        Vertex<PageTitle> find = null;
+        for (Vertex<PageTitle> v : graph.vertices()) {
+            if( v.element().equals(page)) { //equals was overriden in PageTitle!!
+                find = v;
+            }
+        }
+
+        if( find == null) 
+            throw new PageTitleException("Website with name " + page.getPageTitleName() + " does not exist");
+
+        return find;
     }
     
     public List<Hyperlinks> getHyperlinksesBetween(PageTitle page1, PageTitle page2) throws PageTitleException {
@@ -208,28 +184,30 @@ public class WebCrawler {
     
     @Override
     public String toString() {
-        String str = "\nWEB CRAWLER( " + graph.numVertices() + " Pages Title | "+ graph.numEdges() + " Hyperlinks)\n";
-//
-//        for (Vertex<PageTitle> p1 : graph.vertices()) {
-//            for (Vertex<PageTitle> p2 : graph.vertices()) {
-//                if (p1.equals(p2)) {
-//                    //System.out.println("\t sem Rotas \n");
-//                    break;
-//                }
-//                str += "\n" + p2.element().toString() + " TO " + p1.element().toString();
-//                try {
-//                    if(getHyperlinksesBetween(p1.element(), p2.element()).isEmpty()){
-//                        str += "\n\t(no flights)\n";
-//                    }else{
-//                        str += "\n\t" + p2.element().toString() + "\n";
-//                        str += "\t" + p1.element().toString() + "\n";
-//                    }
-//                } catch (PageTitleException ex) {
-//                    Logger.getLogger(WebCrawler.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//                }
-//            }
-       return str;
+        String str = "WEB CRAWLER (" + graph.numVertices() + " pagesTitles | " + graph.numEdges() + " links) \n";
+        for (Vertex<PageTitle> a1 : graph.vertices()) {
+            for (Vertex<PageTitle> a2 : graph.vertices()) {
+                if (a1.equals(a2)) {
+                    break;
+                }
+                str += "\n \t" + a1.element().getPageTitleName().toUpperCase() + " ------- > " + a2.element().getPageTitleName().toUpperCase() + "\n";
+                try {
+                    if(getHyperlinksesBetween(a1.element(), a2.element()).isEmpty()){
+                        str += "\t (NO LINKS) \n";
+                    }else{
+                        List<Hyperlinks> l = new ArrayList<>();
+                        l = getHyperlinksesBetween(a1.element(), a2.element());
+                        for(int i= 0; i< l.size();i++){
+                            str += "\t " + l.get(i).getLink() + "\n";
+                        }
+                    }
+                } catch (PageTitleException ex) {
+                    Logger.getLogger(WebCrawler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+            }
+        }
+        return str;
     }
     
     private Vertex<PageTitle> getVertex(PageTitle pi) {
@@ -315,8 +293,7 @@ public class WebCrawler {
     }
 
 
-    private Vertex<PageTitle> findLowerCostVertex(List<Vertex<PageTitle>> unvisited, 
-            Map<Vertex<PageTitle>, Double> costs) {
+    private Vertex<PageTitle> findLowerCostVertex(List<Vertex<PageTitle>> unvisited, Map<Vertex<PageTitle>, Double> costs) {
         
         double min = Double.MAX_VALUE;
         Vertex<PageTitle> minCostVertex = null;

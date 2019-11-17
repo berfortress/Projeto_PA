@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  *
- * @author berna
+ * @author bernardo
  */
 public class Hyperlinks {
     private int id = 0;

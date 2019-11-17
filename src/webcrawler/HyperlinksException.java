@@ -7,7 +7,7 @@ package webcrawler;
 
 /**
  *
- * @author berna
+ * @author bernardo
  */
 public class HyperlinksException extends Exception{
     public HyperlinksException(String string) {

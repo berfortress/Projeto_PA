@@ -6,26 +6,19 @@
 package webcrawler;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.jsoup.Connection;
 
 /**
  *
- * @author berna
+ * @author bernardo
  */
 public class SpiderLeg {        
         
-        public static void openUrlAndShowTitleAndLinks(String urlAddress, Set<PageTitle> pageTitle, List<Hyperlinks> link) throws IOException {
+        public static void openUrlAndShowTitleAndLinks(String urlAddress, List<PageTitle> pageTitle, List<Hyperlinks> link) throws IOException {
          try{
             Document doc = Jsoup.connect(urlAddress).get();
             String title = doc.title();
