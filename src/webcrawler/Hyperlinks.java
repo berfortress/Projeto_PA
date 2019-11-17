@@ -15,20 +15,30 @@ public class Hyperlinks {
     private int id = 0;
     private static int count = 0; 
     private final double distance;
-    private String linkName;
+    private String name;
+    private String link;
 
-    public Hyperlinks(String linkName) {
+    public Hyperlinks(String name,String link) {
         this.id = ++count;
-        this.linkName = linkName;
+        this.name = name;
+        this.link = link;
         this.distance = 0;
     }
 
-    public String getLinkName() {
-        return linkName;
+    public String getName() {
+        return name;
     }
 
-    public void setLinkName(String linkName) {
-        this.linkName = linkName;
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getDistance() {

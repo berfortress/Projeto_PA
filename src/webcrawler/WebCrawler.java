@@ -13,6 +13,7 @@ import adtgraph.Edge;
 import adtgraph.Graph;
 import adtgraph.Digraph;
 import adtgraph.GraphEdgeList;
+import adtgraph.InvalidEdgeException;
 import adtgraph.InvalidVertexException;
 import adtgraph.Vertex;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import enums.Criteria;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,25 +31,10 @@ import java.util.logging.Logger;
  * @author berna
  */
 public class WebCrawler {
-        private Set<String> pagesVisited = new HashSet<String>();
-        private List<PageTitle> pageTitle = new LinkedList<PageTitle>();
-	private List<Hyperlinks> links = new LinkedList<Hyperlinks>();
-        private List<Hyperlinks> pagesNotFound = new LinkedList<Hyperlinks>();
+        private Set<PageTitle> pageTitle = new HashSet<PageTitle>();
+	private List<Hyperlinks> links = new ArrayList<Hyperlinks>();
         public int maxPagesToSearch;
         private final Graph<PageTitle, Hyperlinks> graph;
-        
-        public enum Criteria {
-        DISTANCE, 
-        COST;
-
-        public String getUnit() {
-            switch(this) {
-                case COST: return "€";
-                case DISTANCE: return "Links";
-            }
-            return "Unknown";
-        }
-    };
 
     private Vertex<PageTitle> checkPageTitle(PageTitle page) throws PageTitleException {
         
@@ -72,7 +59,7 @@ public class WebCrawler {
     }
 
     public WebCrawler() {
-        this.maxPagesToSearch = 100;
+        this.maxPagesToSearch = 4;
         this.graph = new GraphEdgeList<>();
     }
     
@@ -91,9 +78,11 @@ public class WebCrawler {
     private String nextUrl() {
         String nextUrl;
         do {
-                nextUrl = this.links.remove(0).getLinkName();
-        } while (this.pagesVisited.contains(nextUrl));
-        this.pagesVisited.add(nextUrl);
+                nextUrl = links.get(0).getName();
+                links.remove(0);
+
+        } while (links.contains(nextUrl));
+            //links.add(new Hyperlinks(nextUrl));
         return nextUrl;
     }
     
@@ -101,17 +90,35 @@ public class WebCrawler {
         return links;
     }
 	
-    public void search(String url) throws IOException, PageTitleException{
-        while (this.pagesVisited.size() < getMaxPagesToSearch()) {
+    public void search(String url) throws IOException, PageTitleException, HyperlinksException{
+        while (pageTitle.size() < getMaxPagesToSearch()) {
                 String currentUrl;
                 SpiderLeg wc = new SpiderLeg();		
                 if (this.links.isEmpty()) {
                         currentUrl = url;
-                        this.pagesVisited.add(url);
+                        links.add(new Hyperlinks("Link Página Inicial",url));
                 } else {
-                        currentUrl = this.nextUrl();
+                        links.remove(0);
+                        wc.openUrlAndShowTitleAndLinks(url, pageTitle, links);              
                 }
-                wc.openUrlAndShowTitleAndLinks(currentUrl, pageTitle, links, pagesNotFound);// Lots of stuff happening here. Look at the crawl method in SpiderLeg
+        }
+       
+ // Método para remover links repetidos
+        for (int i = 0; i < links.size(); i++) {
+            String s1 = links.get(i).getName();
+                for (int j = i+1; j < links.size(); j++) {
+                        String s2 = links.get(j).getName();
+                        if (s1.compareTo(s2)==0) {
+                                links.remove(j);
+                                j--;
+                        }
+                }
+        }
+        
+        System.out.println("\t Links: (" + links.size() + ")");
+        
+        for (int i = 0; i < links.size(); i++) {
+            System.out.println("\t \t " + "[" + links.get(i).getName().toUpperCase() + "]" + " " + links.get(i).getLink());
         }
         
         for(PageTitle p : pageTitle){
@@ -121,17 +128,32 @@ public class WebCrawler {
                 throw new PageTitleException("Website with name does not exist");
             }
         }
-        test();
-    }
-    
-    public void test() throws PageTitleException{
-        for(int i = pageTitle.size() - 1; i >= 0; i--){
-            for(int j = 0; j < pageTitle.size() - 1 - i; j++){
-                for(int n = 0; n < links.size() - i; n++)
-                    addHyperLinks(pageTitle.get(i), pageTitle.get(j), links.get(n));
+        
+        List<PageTitle> list = new ArrayList<PageTitle>(pageTitle);
+        
+        for(Hyperlinks l : links){
+            try {
+                for (int i = 0; i < links.size(); i++) {
+                     System.out.println(list.get(0) + " " + links.get(i).getName() + " " + links.get(i));
+                     //addHyperLinks(list.get(0), new PageTitle(links.get(i).getName()),links.get(i));
+                }
+            } catch (InvalidEdgeException ex) {
+                throw new HyperlinksException("Link with the name does not exist");
             }
         }
+        System.out.println(graph.numEdges());
     }
+    
+//    public void test() throws PageTitleException{
+//        List<Hyperlinks> linksList = new ArrayList<Hyperlinks>(links);
+//        List<PageTitle> pageList = new ArrayList<PageTitle>(pageTitle);
+//        for(int i = pageTitle.size() - 1; i >= 0; i--){
+//            for(int j = 0; j < pageTitle.size() - 1 - i; j++){
+//                for(int n = 0; n < links.size() - i; n++)
+//                    addHyperLinks(pageList.get(i), pageList.get(j), linksList.get(n));
+//            }
+//        }
+//    }
         
     public void addPageTitle(PageTitle page) throws PageTitleException{
         try {
@@ -152,7 +174,7 @@ public class WebCrawler {
         try {
             graph.insertEdge(a1, a2, link);
         } catch (InvalidVertexException e) {
-            throw new PageTitleException("The Hyper link " + link.toString() + " already exists");
+            throw new PageTitleException("The Hyperlink " + link.toString() + " already exists");
         }
     }
     
@@ -175,7 +197,7 @@ public class WebCrawler {
     @Override
     public String toString() {
         String str = "\nWEB CRAWLER( " + graph.numVertices() + " Pages Title | "+ graph.numEdges() + " Hyperlinks)\n";
-
+//
 //        for (Vertex<PageTitle> p1 : graph.vertices()) {
 //            for (Vertex<PageTitle> p2 : graph.vertices()) {
 //                if (p1.equals(p2)) {
@@ -195,7 +217,7 @@ public class WebCrawler {
 //                }
 //                }
 //            }
-        return str;
+       return str;
     }
     
     private Vertex<PageTitle> getVertex(PageTitle pi) {

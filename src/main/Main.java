@@ -20,6 +20,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import webcrawler.HyperlinksException;
 import webcrawler.PageTitleException;
 
 /**
@@ -34,35 +35,33 @@ import webcrawler.PageTitleException;
  */
 public class Main {
 
-    public static void main(String[] args) throws IOException, PageTitleException {
+    public static void main(String[] args) throws IOException, PageTitleException, HyperlinksException {
         WebCrawler wc = new WebCrawler(1);
-        List<PageTitle> linkTitle = new LinkedList<PageTitle>();
-        List<Hyperlinks> links = new LinkedList<Hyperlinks>(); // Just a list of URLs
-        List<Hyperlinks> notFound = new LinkedList<Hyperlinks>();
         
         //opendUrlAndShowTitleAndLinks("https://jsoup.org/");
         //wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
         //wc.search("https://v1.mrpiracy.top/");
         try {
             wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
+            //wc.search("https://v1.mrpiracy.top/");
 
 
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        for(PageTitle p : linkTitle){
-            try {
-                wc.addPageTitle(p);
-            } catch (InvalidVertexException ex) {
-                throw new PageTitleException("Website with name does not exist");
-            }
-        }
+//        for(PageTitle p : linkTitle){
+//            try {
+//                wc.addPageTitle(p);
+//            } catch (InvalidVertexException ex) {
+//                throw new PageTitleException("Website with name does not exist");
+//            }
+//        }
         
-        System.out.println(wc.getAllPageTitle());
-        System.out.println(wc.toString());
-        for(Hyperlinks h : wc.getLinks())
-            System.out.println(h.getLinkName()+"\n");
+//        System.out.println(wc.getAllPageTitle());
+//        System.out.println(wc.toString());
+//        for(Hyperlinks h : wc.getLinks())
+//            System.out.println(h.getLinkName()+"\n");
     }
 }
 
