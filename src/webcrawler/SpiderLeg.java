@@ -25,7 +25,7 @@ import org.jsoup.Connection;
  */
 public class SpiderLeg {        
         
-        public static void openUrlAndShowTitleAndLinks(String urlAddress, Set<PageTitle> linkTitle, List<Hyperlinks> link) throws IOException {
+        public static void openUrlAndShowTitleAndLinks(String urlAddress, Set<PageTitle> pageTitle, List<Hyperlinks> link) throws IOException {
          try{
             Document doc = Jsoup.connect(urlAddress).get();
             String title = doc.title();
@@ -33,10 +33,10 @@ public class SpiderLeg {
 
             Elements links = doc.select("a[href]");
             if(title.isEmpty()){
-                linkTitle.add(new PageTitle("404 - Not Found"));
+                pageTitle.add(new PageTitle("404 - Not Found"));
                     //notFound.add(new Hyperlinks(l.attr("abs:href")));
             }else {
-                linkTitle.add(new PageTitle(title));
+                pageTitle.add(new PageTitle(title));
             }    
             for (Element l : links) {
                 //abs:href is important, so it transforms relative paths, e.g., href="../home.html"

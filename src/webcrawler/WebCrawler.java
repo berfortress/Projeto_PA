@@ -31,9 +31,9 @@ import java.util.logging.Logger;
  * @author berna
  */
 public class WebCrawler {
-        private Set<PageTitle> pageTitle = new HashSet<PageTitle>();
-	private List<Hyperlinks> links = new ArrayList<Hyperlinks>();
-        public int maxPagesToSearch;
+        private Set<PageTitle> pageTitle;
+	private List<Hyperlinks> links;
+        private int maxPagesToSearch;
         private final Graph<PageTitle, Hyperlinks> graph;
 
     private Vertex<PageTitle> checkPageTitle(PageTitle page) throws PageTitleException {
@@ -54,8 +54,10 @@ public class WebCrawler {
     }
     
     public WebCrawler(int maxPagesToSearch) {
+        this.links = new ArrayList<Hyperlinks>();
         this.maxPagesToSearch = maxPagesToSearch;
         this.graph = new GraphEdgeList<>();
+        this.pageTitle = new HashSet<PageTitle>();
     }
 
     public WebCrawler() {
@@ -131,17 +133,27 @@ public class WebCrawler {
         
         List<PageTitle> list = new ArrayList<PageTitle>(pageTitle);
         
+        for (int i = 0; i < links.size(); i++) {
+            try {
+                addPageTitle(new PageTitle(links.get(i).getName()));
+                list.add(new PageTitle(links.get(i).getName()));
+            } catch (InvalidVertexException ex) {
+                throw new PageTitleException("Website with name does not exist");
+            }
+        }
+        
+        System.out.println(list);
+        
         for(Hyperlinks l : links){
             try {
                 for (int i = 0; i < links.size(); i++) {
-                     System.out.println(list.get(0) + " " + links.get(i).getName() + " " + links.get(i));
-                     //addHyperLinks(list.get(0), new PageTitle(links.get(i).getName()),links.get(i));
+                     //System.out.println(list.get(0) + " " + links.get(i).getName() + " " + links.get(i));
+                     addHyperLinks(list.get(0), list.get(i),links.get(i));
                 }
             } catch (InvalidEdgeException ex) {
                 throw new HyperlinksException("Link with the name does not exist");
             }
         }
-        System.out.println(graph.numEdges());
     }
     
 //    public void test() throws PageTitleException{
