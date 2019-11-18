@@ -24,7 +24,6 @@ import java.util.logging.Logger;
  *
  * @author bernardo
  */
-
 public class WebCrawler {
         private List<PageTitle> pageTitle;
 	private List<Hyperlinks> links;
@@ -136,7 +135,8 @@ public class WebCrawler {
         }
     }
     
-    public void addHyperLinks(PageTitle page1, PageTitle page2, Hyperlinks link) throws PageTitleException{   
+    public void addHyperLinks(PageTitle page1, PageTitle page2, Hyperlinks link) throws PageTitleException{
+        
         if(link == null) throw new PageTitleException("Hyper link is null");
         
         Vertex<PageTitle> a1 = checkPageTitle(page1);
@@ -254,7 +254,11 @@ public class WebCrawler {
         return (int) cost;
     }
 
-    private void dijkstra(Criteria criteria, Vertex<PageTitle> orig, Map<Vertex<PageTitle>, Double> costs, Map<Vertex<PageTitle>, Vertex<PageTitle>> predecessors, Map<Vertex<PageTitle>, Edge<Hyperlinks, PageTitle>> edgesP) {
+    private void dijkstra(Criteria criteria, Vertex<PageTitle> orig,
+            Map<Vertex<PageTitle>, Double> costs,
+            Map<Vertex<PageTitle>, Vertex<PageTitle>> predecessors,
+            Map<Vertex<PageTitle>, Edge<Hyperlinks, PageTitle>> edgesP) {
+
         List<Vertex<PageTitle>> unvisited = new ArrayList();
 
         for (Vertex<PageTitle> page2 : graph.vertices()) {
@@ -289,7 +293,8 @@ public class WebCrawler {
     }
 
 
-    private Vertex<PageTitle> findLowerCostVertex(List<Vertex<PageTitle>> unvisited, Map<Vertex<PageTitle>, Double> costs) { 
+    private Vertex<PageTitle> findLowerCostVertex(List<Vertex<PageTitle>> unvisited, Map<Vertex<PageTitle>, Double> costs) {
+        
         double min = Double.MAX_VALUE;
         Vertex<PageTitle> minCostVertex = null;
         for (Vertex<PageTitle> vertex : unvisited) {
