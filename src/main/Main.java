@@ -24,14 +24,14 @@ import webcrawler.PageTitleException;
 public class Main {
 
     public static void main(String[] args) throws IOException, PageTitleException, HyperlinksException {
-        WebCrawler wc = new WebCrawler(1);
+        WebCrawler wc = new WebCrawler(19);
         try {
             wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
             //wc.search("https://v1.mrpiracy.top/");
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println(wc.toString());    
+        //System.out.println(wc.toString());    
     }
 }
 
