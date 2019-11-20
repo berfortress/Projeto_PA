@@ -80,15 +80,13 @@ public class WebCrawler {
         int count = 0;
         while (pagesVisited.size() < getMaxPagesToSearch()) {	
             if (linksNotVisited.isEmpty()) {
-                    count = 1;
-                    wc.openUrlAndShowTitleAndLinks(linksVisited.get(count).getLink(), pagesVisited, linksNotVisited);
-                    count++;
+                    wc.openUrlAndShowTitleAndLinks(linksVisited.get(1).getLink(), pagesVisited, linksNotVisited);
             } else {
                     wc.openUrlAndShowTitle(linksNotVisited.get(count).getLink(), pagesVisited); 
-                    Hyperlinks link = linksNotVisited.get(count);
-                    linksNotVisited.remove(count);
-                    count++;
+                    Hyperlinks link = linksNotVisited.get(0);
+                    linksNotVisited.remove(0);
                     linksVisited.add(link);
+                    count++;
             }
         }
         
