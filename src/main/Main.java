@@ -28,6 +28,7 @@ public class Main {
         try {
             wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
             //wc.search("https://v1.mrpiracy.top/");
+            //wc.search("https://www.youtube.com/?hl=pt-PT&gl=PT");
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }

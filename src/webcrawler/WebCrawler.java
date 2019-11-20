@@ -76,12 +76,7 @@ public class WebCrawler {
     public void search(String url) throws IOException, PageTitleException, HyperlinksException{
         SpiderLeg wc = new SpiderLeg();	
         wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited);
-//        PageTitle page = pagesVisited.get(0);
-//        for(PageTitle p: pagesVisited){
-//        for(Hyperlinks l: linksNotVisited){
-//            addHyperLinks(page,p,l);
-//        }
-//        }
+        PageTitle page = pagesVisited.get(0);
         while (pagesVisited.size() < getMaxPagesToSearch()) {	
             if (linksNotVisited.isEmpty()) {
                     int count = 1;
@@ -105,12 +100,6 @@ public class WebCrawler {
             }
         }
         
-//        for (int i = 0; i < links.size(); i++) {
-//                PageTitle title = new PageTitle(links.get(i).getName());
-//                addPageTitle(title);
-//                pageTitle.add(title);
-//        }
-//        
 //        try {
 //            int count = 1;
 //            for(int j = 0; j < links.size(); j++){
@@ -127,7 +116,7 @@ public class WebCrawler {
         System.out.println("Links Visitados " + getLinksVisited());
         System.out.println("Nº Links Não Visitados " + getLinksNotVisited().size());       
         System.out.println("Links Não Visitados " + getLinksNotVisited());  
-        System.out.println(graph.vertices());
+        System.out.println("Vertices" + graph.vertices());
     }
 
         
