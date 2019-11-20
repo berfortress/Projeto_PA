@@ -4,9 +4,6 @@
  * and open the template in the editor.
  */
 package webcrawler;
-
-import java.util.ArrayList;
-import java.util.List;
 /**
  *
  * @author bernardo
@@ -20,7 +17,7 @@ public class PageTitle {
     public PageTitle(String pageTitleName) {
         this.id = ++count;
         this.pageTitleName = pageTitleName;
-    }
+    }  
 
     public String getPageTitleName() {
         return pageTitleName;
