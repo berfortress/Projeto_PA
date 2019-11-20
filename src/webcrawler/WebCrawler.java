@@ -9,6 +9,7 @@ import java.util.List;
 import adtgraph.Edge;
 import adtgraph.Graph;
 import adtgraph.GraphEdgeList;
+import adtgraph.InvalidEdgeException;
 import adtgraph.InvalidVertexException;
 import adtgraph.Vertex;
 import java.io.IOException;
@@ -77,7 +78,7 @@ public class WebCrawler {
         wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited);
         PageTitle page = pagesVisited.get(0);
         int count = 0;
-        while (pagesVisited.size() <= getMaxPagesToSearch()) {	
+        while (pagesVisited.size() < getMaxPagesToSearch()) {	
             if (linksNotVisited.isEmpty()) {
                     count = 1;
                     wc.openUrlAndShowTitleAndLinks(linksVisited.get(count).getLink(), pagesVisited, linksNotVisited);
@@ -99,14 +100,18 @@ public class WebCrawler {
             }
         }
         
-//        try {
-//            int count = 1;
-//            for(int j = 0; j < links.size(); j++){
-//                addHyperLinks(pageTitle.get(0), pageTitle.get(count++), links.get(j));
-//            }
-//        } catch (InvalidEdgeException ex) {
-//            throw new HyperlinksException("Link with the name does not exist");
-//        }
+        addRelation();
+    }
+    
+    public void addRelation() throws PageTitleException, HyperlinksException{
+        try {
+            int count = 1;
+            for(int j = 0; j < linksVisited.size(); j++){
+                addHyperLinks(pagesVisited.get(0), pagesVisited.get(count++), linksVisited.get(j));
+            }
+        } catch (InvalidEdgeException ex) {
+            throw new HyperlinksException("Link with the name does not exist");
+        }
     }
 
         
@@ -181,7 +186,7 @@ public class WebCrawler {
                         List<Hyperlinks> l = new ArrayList<>();
                         l = getHyperlinksesBetween(a1.element(), a2.element());
                         for(int i= 0; i< l.size();i++){
-                            str += "\t " + l.get(i).getLink() + "\n";
+                            str += "\t ["+ l.get(i).getName() +"] "+ l.get(i).getLink() + "\n";
                         }
                     }
                 } catch (PageTitleException ex) {
