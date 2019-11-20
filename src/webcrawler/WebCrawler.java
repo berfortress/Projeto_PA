@@ -176,7 +176,7 @@ public class WebCrawler {
                 if (a1.equals(a2)) {
                     break;
                 }
-                str += "\n \t" + a1.element().getPageTitleName().toUpperCase() + " ------- > " + a2.element().getPageTitleName().toUpperCase() + "\n";
+                str += "\n \t" + "[" + a1.element().getPageTitleName() + "]" + " TO " + "[" + a2.element().getPageTitleName() + "]" + "\n";
                 try {
                     if(getHyperlinksesBetween(a1.element(), a2.element()).isEmpty()){
                         str += "\t (NO LINKS) \n";
