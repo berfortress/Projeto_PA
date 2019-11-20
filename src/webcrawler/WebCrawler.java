@@ -77,6 +77,10 @@ public class WebCrawler {
         SpiderLeg wc = new SpiderLeg();	
         wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited);
         PageTitle page = pagesVisited.get(0);
+        if(linksNotVisited.isEmpty()){
+            System.out.println("Sorry but the Page " + pagesVisited.get(0).getPageTitleName() + " dont have any url.");
+        }
+        else{
         int count = 0;
         while (pagesVisited.size() < getMaxPagesToSearch()) {	
             if (linksNotVisited.isEmpty()) {
@@ -89,6 +93,7 @@ public class WebCrawler {
                     count++;
             }
         }
+                }
         
         for(PageTitle p : pagesVisited){
             try {
