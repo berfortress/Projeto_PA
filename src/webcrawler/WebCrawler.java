@@ -25,13 +25,13 @@ import java.util.logging.Logger;
  * @author bernardo
  */
 public class WebCrawler {
-	private List<Hyperlinks> linksVisited;
-        private List<Hyperlinks> linksNotVisited;
-        private int maxPagesToSearch;
-        private List<PageTitle> pagesVisited;
-        private final Graph<PageTitle, Hyperlinks> graph;
-        
-    
+
+    private List<Hyperlinks> linksVisited;
+    private List<Hyperlinks> linksNotVisited;
+    private int maxPagesToSearch;
+    private List<PageTitle> pagesVisited;
+    private final Graph<PageTitle, Hyperlinks> graph;
+
     public WebCrawler(int maxPagesToSearch) {
         this.maxPagesToSearch = maxPagesToSearch;
         this.graph = new GraphEdgeList<>();
@@ -59,7 +59,7 @@ public class WebCrawler {
     public List<Hyperlinks> getLinksNotVisited() {
         return linksNotVisited;
     }
-    
+
     public int getMaxPagesToSearch() {
         return maxPagesToSearch;
     }
@@ -67,48 +67,46 @@ public class WebCrawler {
     public void setMaxPagesToSearch(int maxPagesToSearch) {
         this.maxPagesToSearch = maxPagesToSearch;
     }
-    
-    public Iterable<Vertex<PageTitle>> getAllPageTitle(){
+
+    public Iterable<Vertex<PageTitle>> getAllPageTitle() {
         return graph.vertices();
     }
 
-	
-    public void search(String url) throws IOException, PageTitleException, HyperlinksException{
-        SpiderLeg wc = new SpiderLeg();	
+    public void search(String url) throws IOException, PageTitleException, HyperlinksException {
+        SpiderLeg wc = new SpiderLeg();
         wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited);
-        if(linksNotVisited.isEmpty()){
+        if (linksNotVisited.isEmpty()) {
             System.out.println("**** SORRY BUT THE PAGE " + pagesVisited.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
-        }
-        else{
-        int count = 0;
-            while (pagesVisited.size() < getMaxPagesToSearch()) {	
+        } else {
+            int count = 0;
+            while (pagesVisited.size() < getMaxPagesToSearch()) {
                 if (linksNotVisited.isEmpty()) {
-                        wc.openUrlAndShowTitleAndLinks(linksVisited.get(1).getLink(), pagesVisited, linksNotVisited);
+                    wc.openUrlAndShowTitleAndLinks(linksVisited.get(1).getLink(), pagesVisited, linksNotVisited);
                 } else {
-                        wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited); 
-                        Hyperlinks link = linksNotVisited.get(0);
-                        linksNotVisited.remove(0);
-                        linksVisited.add(link);
-                        count++;
+                    wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited);
+                    Hyperlinks link = linksNotVisited.get(0);
+                    linksNotVisited.remove(0);
+                    linksVisited.add(link);
+                    count++;
                 }
             }
         }
-        
-        for(PageTitle p : pagesVisited){
+
+        for (PageTitle p : pagesVisited) {
             try {
                 addPageTitle(p);
             } catch (InvalidVertexException ex) {
                 throw new PageTitleException("Website with name does not exist");
             }
         }
-        
+
         addRelation();
     }
-    
-    public void addRelation() throws PageTitleException, HyperlinksException{
+
+    public void addRelation() throws PageTitleException, HyperlinksException {
         try {
             int count = 1;
-            for(int j = 0; j < linksVisited.size(); j++){
+            for (int j = 0; j < linksVisited.size(); j++) {
                 addHyperLinks(pagesVisited.get(0), pagesVisited.get(count++), linksVisited.get(j));
             }
         } catch (InvalidEdgeException ex) {
@@ -116,46 +114,50 @@ public class WebCrawler {
         }
     }
 
-        
-    public void addPageTitle(PageTitle page) throws PageTitleException{
+    public void addPageTitle(PageTitle page) throws PageTitleException {
         try {
             graph.insertVertex(page);
         } catch (InvalidVertexException e) {
             throw new PageTitleException("Website with name " + page.getPageTitleName() + " does not exist");
         }
     }
-    
-    public void addHyperLinks(PageTitle page1, PageTitle page2, Hyperlinks link) throws PageTitleException{
-        
-        if(link == null) throw new PageTitleException("Hyper link is null");
-        
+
+    public void addHyperLinks(PageTitle page1, PageTitle page2, Hyperlinks link) throws PageTitleException {
+
+        if (link == null) {
+            throw new PageTitleException("Hyper link is null");
+        }
+
         Vertex<PageTitle> a1 = checkPageTitle(page1);
         Vertex<PageTitle> a2 = checkPageTitle(page2);
-        
+
         try {
             graph.insertEdge(a1, a2, link);
         } catch (InvalidVertexException e) {
             throw new PageTitleException("The Hyperlink " + link.toString() + " already exists");
         }
     }
-    
+
     private Vertex<PageTitle> checkPageTitle(PageTitle page) throws PageTitleException {
-        
-        if( page == null) throw new PageTitleException("Page title cannot be null");
+
+        if (page == null) {
+            throw new PageTitleException("Page title cannot be null");
+        }
 
         Vertex<PageTitle> find = null;
         for (Vertex<PageTitle> v : graph.vertices()) {
-            if( v.element().equals(page)) { //equals was overriden in PageTitle!!
+            if (v.element().equals(page)) { //equals was overriden in PageTitle!!
                 find = v;
             }
         }
 
-        if( find == null) 
+        if (find == null) {
             throw new PageTitleException("Website with name " + page.getPageTitleName() + " does not exist");
+        }
 
         return find;
     }
-    
+
     public List<Hyperlinks> getHyperlinksesBetween(PageTitle page1, PageTitle page2) throws PageTitleException {
         Vertex<PageTitle> p1 = checkPageTitle(page1);
         Vertex<PageTitle> p2 = checkPageTitle(page2);
@@ -171,7 +173,7 @@ public class WebCrawler {
         }
         return list;
     }
-    
+
     @Override
     public String toString() {
         String str = "WEB CRAWLER (" + graph.numVertices() + " pagesTitles | " + graph.numEdges() + " links) \n";
@@ -182,31 +184,31 @@ public class WebCrawler {
                 }
                 str += "\n \t" + "[" + a1.element().getPageTitleName() + "]" + " TO " + "[" + a2.element().getPageTitleName() + "]" + "\n";
                 try {
-                    if(getHyperlinksesBetween(a1.element(), a2.element()).isEmpty()){
+                    if (getHyperlinksesBetween(a1.element(), a2.element()).isEmpty()) {
                         str += "\t (NO LINKS) \n";
-                    }else{
+                    } else {
                         List<Hyperlinks> l = new ArrayList<>();
                         l = getHyperlinksesBetween(a1.element(), a2.element());
-                        for(int i= 0; i< l.size();i++){
-                            str += "\t ["+ l.get(i).getName() +"] "+ l.get(i).getLink() + "\n";
+                        for (int i = 0; i < l.size(); i++) {
+                            str += "\t [" + l.get(i).getName() + "] " + l.get(i).getLink() + "\n";
                         }
                     }
                 } catch (PageTitleException ex) {
                     Logger.getLogger(WebCrawler.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
+
             }
         }
-        
+
         str += "\nNº Páginas Totais " + getPagesVisited().size();
-        for(int i = 0; i < getPagesVisited().size();i++){
-             str += "\nPáginas Visitadas " + pagesVisited.get(i);
+        for (int i = 0; i < getPagesVisited().size(); i++) {
+            str += "\nPáginas Visitadas " + pagesVisited.get(i);
         }
-        str += "\nNº Links Visitados " + getLinksVisited().size() + "\nLinks Visitados " + getLinksVisited() + "\nNº Links Não Visitados " 
-                + getLinksNotVisited().size() + "\nLinks Não Visitados " + getLinksNotVisited() + "\nVertices" + graph.vertices() + "\nEdges" + graph.edges(); 
+        str += "\nNº Links Visitados " + getLinksVisited().size() + "\nLinks Visitados " + getLinksVisited() + "\nNº Links Não Visitados "
+                + getLinksNotVisited().size() + "\nLinks Não Visitados " + getLinksNotVisited() + "\nVertices" + graph.vertices() + "\nEdges" + graph.edges();
         return str;
     }
-    
+
     private Vertex<PageTitle> getVertex(PageTitle pi) {
         for (Vertex<PageTitle> ap : graph.vertices()) {
             if (ap.element().equals(pi)) {
@@ -215,7 +217,7 @@ public class WebCrawler {
         }
         return null;
     }
-  
+
     public int minimumCostPath(Criteria criteria, PageTitle orig, PageTitle dst, List<PageTitle> pontos, List<Hyperlinks> path) throws PageTitleException {
         if (orig == null || dst == null) {
             throw new PageTitleException("Invalid - Ponto de interesse");
@@ -296,6 +298,6 @@ public class WebCrawler {
             }
         }
         return minCostVertex;
-        
+
     }
 }
