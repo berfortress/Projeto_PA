@@ -22,7 +22,6 @@ public class SpiderLeg {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
             String title = doc.title();
-            //print("PAGE TITLE: %s \n", title);
 
             Elements links = doc.select("a[href]");
             if (title.isEmpty()) {
@@ -38,9 +37,9 @@ public class SpiderLeg {
                 }
             }
             removeRepeatedLinks(link);
-            for (Hyperlinks l : link) {
-                System.out.println(l.getName() + " " + l.getLink());
-            }
+//            for (Hyperlinks l : link) {
+//                System.out.println(l.getName() + " " + l.getLink());
+//            }
 
         } catch (IOException ex) {
             System.out.println("HTTP request error" + ex);
@@ -51,7 +50,6 @@ public class SpiderLeg {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
             String title = doc.title();
-            //print("PAGE TITLE: %s \n", title);
 
             Elements links = doc.select("a[href]");
             if (title.isEmpty()) {
@@ -64,26 +62,46 @@ public class SpiderLeg {
         }
     }
 
-    private void removeRepeatedLinks(List<Hyperlinks> links) {
+    private void removeAfterCharacters(List<Hyperlinks> links, Hyperlinks link, String url, String characters) {
         int indexOf;
-        for (int i = 0; i < links.size(); i++) {
-            String s1 = links.get(i).getLink();
-            indexOf = s1.indexOf("#");
+        int urlSize;
+        if (characters.equalsIgnoreCase("#")) {
+            indexOf = url.indexOf(characters);
             if (indexOf > -1) {
-                s1 = s1.substring(0, indexOf);
+                url = url.substring(0, indexOf);
+                if (url.compareToIgnoreCase(link.getLink()) == 0) {
+                    links.remove((link.getLink() == null ? url == null : link.getLink().equals(url)));
+                }
             }
+        }
+        if (characters.equalsIgnoreCase("/")) {
+            indexOf = url.lastIndexOf(characters);
+            urlSize = url.length();
+            if (urlSize >= indexOf + 1) {
+                links.remove(link);
+            }
+        }
 
+    }
+
+    private void removeRepeatedLinks(List<Hyperlinks> links) {
+
+        for (int i = 0; i < links.size(); i++) {
             for (int j = i + 1; j < links.size(); j++) {
-                String s2 = links.get(j).getLink();
-                indexOf = s2.indexOf("#");
-                if (indexOf > -1) {
-                    s2 = s2.substring(0, indexOf);
+                String s1 = links.get(j).getLink();
+                removeAfterCharacters(links, links.get(i), s1, "#");
+                removeAfterCharacters(links, links.get(i), s1, "/");
+
+                if (links.contains(s1)) {
+                    links.remove(i);
                 }
-                if (s1.compareTo(s2) == 0) {
-                    links.remove(j);
-                    j--;
-                }
+
             }
+        }
+        
+
+        for (Hyperlinks l : links) {
+            System.out.println(l.getLink());
         }
     }
 
