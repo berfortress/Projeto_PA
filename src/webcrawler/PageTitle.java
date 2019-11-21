@@ -12,16 +12,27 @@ public class PageTitle {
     private int id = 0;
     private static int count = 0;
     private String pageTitleName;
+    private String pageAddress;
 
 
-    public PageTitle(String pageTitleName) {
+    public PageTitle(String pageTitleName, String pageAddress) {
         this.id = ++count;
         this.pageTitleName = pageTitleName;
+        this.pageAddress = pageAddress;
     }  
 
     public String getPageTitleName() {
         return pageTitleName;
     }
+
+    public String getPageAddress() {
+        return pageAddress;
+    }
+
+    public void setPageAddress(String pageAddress) {
+        this.pageAddress = pageAddress;
+    }
+    
 
     public void setPageTitleName(String pageTitleName) {
         this.pageTitleName = pageTitleName;
@@ -33,7 +44,7 @@ public class PageTitle {
 
     @Override
     public String toString() {
-        return "" + id + ": " + pageTitleName;
+        return "" + id + ": " + getPageTitleName() + " " + "[" + getPageAddress() + "]";
     }
     
     @Override

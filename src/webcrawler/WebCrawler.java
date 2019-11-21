@@ -76,24 +76,23 @@ public class WebCrawler {
     public void search(String url) throws IOException, PageTitleException, HyperlinksException{
         SpiderLeg wc = new SpiderLeg();	
         wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited);
-        PageTitle page = pagesVisited.get(0);
         if(linksNotVisited.isEmpty()){
-            System.out.println("Sorry but the Page " + pagesVisited.get(0).getPageTitleName() + " dont have any url.");
+            System.out.println("**** SORRY BUT THE PAGE " + pagesVisited.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
         }
         else{
         int count = 0;
-        while (pagesVisited.size() < getMaxPagesToSearch()) {	
-            if (linksNotVisited.isEmpty()) {
-                    wc.openUrlAndShowTitleAndLinks(linksVisited.get(1).getLink(), pagesVisited, linksNotVisited);
-            } else {
-                    wc.openUrlAndShowTitle(linksNotVisited.get(count).getLink(), pagesVisited); 
-                    Hyperlinks link = linksNotVisited.get(0);
-                    linksNotVisited.remove(0);
-                    linksVisited.add(link);
-                    count++;
+            while (pagesVisited.size() < getMaxPagesToSearch()) {	
+                if (linksNotVisited.isEmpty()) {
+                        wc.openUrlAndShowTitleAndLinks(linksVisited.get(1).getLink(), pagesVisited, linksNotVisited);
+                } else {
+                        wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited); 
+                        Hyperlinks link = linksNotVisited.get(0);
+                        linksNotVisited.remove(0);
+                        linksVisited.add(link);
+                        count++;
+                }
             }
         }
-                }
         
         for(PageTitle p : pagesVisited){
             try {
@@ -204,7 +203,7 @@ public class WebCrawler {
              str += "\nPáginas Visitadas " + pagesVisited.get(i);
         }
         str += "\nNº Links Visitados " + getLinksVisited().size() + "\nLinks Visitados " + getLinksVisited() + "\nNº Links Não Visitados " 
-                + getLinksNotVisited().size() + "\nLinks Não Visitados " + getLinksNotVisited() + "\nVertices" + graph.vertices(); 
+                + getLinksNotVisited().size() + "\nLinks Não Visitados " + getLinksNotVisited() + "\nVertices" + graph.vertices() + "\nEdges" + graph.edges(); 
         return str;
     }
     

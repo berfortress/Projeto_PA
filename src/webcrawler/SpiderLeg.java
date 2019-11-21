@@ -26,9 +26,9 @@ public class SpiderLeg {
 
             Elements links = doc.select("a[href]");
             if(title.isEmpty()){
-                pageTitle.add(new PageTitle("404 - Not Found"));
+                pageTitle.add(new PageTitle("404 - Not Found", urlAddress));
             }else {
-                pageTitle.add(new PageTitle(title));
+                pageTitle.add(new PageTitle(title, urlAddress));
             }    
             for (Element l : links) {
                   if(l.text().isEmpty()){
@@ -55,9 +55,9 @@ public class SpiderLeg {
 
             Elements links = doc.select("a[href]");
             if(title.isEmpty()){
-                pageTitle.add(new PageTitle("404 - Not Found"));
+                pageTitle.add(new PageTitle("404 - Not Found", urlAddress));
             }else {
-                pageTitle.add(new PageTitle(title));
+                pageTitle.add(new PageTitle(title, urlAddress));
             }    
         }catch (IOException ex) {
             System.out.println("HTTP request error" + ex);
@@ -67,11 +67,22 @@ public class SpiderLeg {
     private void removeRepeatedLinks (List<Hyperlinks> links){
         for (int i = 0; i < links.size(); i++) {
         String s1 = links.get(i).getName();
+        
+        /* remove trailing #link */
+            String[] trailing1 = s1.split("#");
+
+        
             for (int j = i+1; j < links.size(); j++) {
                 String s2 = links.get(j).getName();
+                String[] trailing2 = s2.split("#");
                     if (s1.compareTo(s2)==0) {
                         links.remove(j);
                         j--;
+                }else{
+                    for(String s: trailing1){
+                        if(s2.contains(s))
+                            links.remove(s);
+                    }
                 }
             }
         }

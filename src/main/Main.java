@@ -25,7 +25,6 @@ public class Main {
         System.out.println(" 1- MODO AUTOMÁTICO");
         System.out.println(" 2- MODO ITERATIVO");
         Scanner myObj = new Scanner(System.in);
-        //WebCrawler wc = new WebCrawler(4);
         try {
             int option = myObj.nextInt();
             if(option == 1){
@@ -36,9 +35,10 @@ public class Main {
                 int maxNum = myObj.nextInt();
                 WebCrawler wc = new WebCrawler(maxNum);             
 //                wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
-                  wc.search(url);
-                if(!wc.getLinksVisited().isEmpty())
+                wc.search(url);
+                if(!wc.getLinksVisited().isEmpty() || maxNum >=1 ){
                   System.out.println(wc.toString());
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
