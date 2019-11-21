@@ -66,25 +66,23 @@ public class SpiderLeg {
     
     private void removeRepeatedLinks (List<Hyperlinks> links){
         for (int i = 0; i < links.size(); i++) {
-        String s1 = links.get(i).getName();
-        
+        String s1 = links.get(i).getName();     
         /* remove trailing #link */
-            String[] trailing1 = s1.split("#");
-
-        
+     
             for (int j = i+1; j < links.size(); j++) {
                 String s2 = links.get(j).getName();
-                String[] trailing2 = s2.split("#");
                     if (s1.compareTo(s2)==0) {
                         links.remove(j);
                         j--;
-                }else{
-                    for(String s: trailing1){
-                        if(s2.contains(s))
-                            links.remove(s);
-                    }
                 }
             }
+        }
+    }
+    
+    private void remove(String link){
+        int indexOf = link.indexOf("#");
+        if(indexOf > -1){
+            link = link.substring(0, indexOf);
         }
     }
      
