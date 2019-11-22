@@ -13,6 +13,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import static java.util.Comparator.comparingInt;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
@@ -25,6 +27,7 @@ public class SpiderLeg {
 
     public void openUrlAndShowTitleAndLinks(String urlAddress, List<PageTitle> pageTitle, List<Hyperlinks> link) throws IOException {
         try {
+            
             Document doc = Jsoup.connect(urlAddress).get();
             String title = doc.title();
 
@@ -37,12 +40,17 @@ public class SpiderLeg {
             for (Element l : links) {
                 if (l.text().isEmpty()) {
                     link.add(new Hyperlinks("-----", l.attr("abs:href")));
+                    //link.add(new Hyperlinks("-----", l.attr("abs:href")));
                 } else {
+                    //link.add(new Hyperlinks(l.text(), l.attr("abs:href")));
                     link.add(new Hyperlinks(l.text(), l.attr("abs:href")));
                 }
             }
+            
             removeRepeatedLinks(link);
-//            for (Hyperlinks l : link) {
+            removeDuplicates(link);
+
+//           for (Hyperlinks l : link) {
 //                System.out.println(l.getName() + " " + l.getLink());
 //            }
 
@@ -51,21 +59,21 @@ public class SpiderLeg {
         }
     }
 
-    public void openUrlAndShowTitle(String urlAddress, List<PageTitle> pageTitle) throws IOException {
-        try {
-            Document doc = Jsoup.connect(urlAddress).get();
-            String title = doc.title();
-
-            Elements links = doc.select("a[href]");
-            if (title.isEmpty()) {
-                pageTitle.add(new PageTitle("404 - Not Found", urlAddress));
-            } else {
-                pageTitle.add(new PageTitle(title, urlAddress));
-            }
-        } catch (IOException ex) {
-            System.out.println("HTTP request error" + ex);
-        }
-    }
+//    public void openUrlAndShowTitle(String urlAddress, List<PageTitle> pageTitle) throws IOException {
+//        try {
+//            Document doc = Jsoup.connect(urlAddress).get();
+//            String title = doc.title();
+//
+//            Elements links = doc.select("a[href]");
+//            if (title.isEmpty()) {
+//                pageTitle.add(new PageTitle("404 - Not Found", urlAddress));
+//            } else {
+//                pageTitle.add(new PageTitle(title, urlAddress));
+//            }
+//        } catch (IOException ex) {
+//            System.out.println("HTTP request error" + ex);
+//        }
+//    }
 
     private void removeAfterCharacters(List<Hyperlinks> links, Hyperlinks link, String url, String characters) {
         int indexOf;
@@ -79,7 +87,7 @@ public class SpiderLeg {
                 }
             }
         }
-        
+
         if (characters.equalsIgnoreCase("/")) {
             indexOf = url.lastIndexOf(characters);
             urlSize = url.length();
@@ -87,7 +95,7 @@ public class SpiderLeg {
                 links.remove(link);
             }
         }
-        
+
         if (url.compareToIgnoreCase(link.getLink()) == 0) {
             links.remove((link.getLink().equals(url)));
         }
@@ -105,13 +113,24 @@ public class SpiderLeg {
 //                    links.remove(j);
             }
         }
-        
+
 //        for (int i = 0; i < links.size(); i++) {
 //            for (Hyperlinks l : links) {
 //                if(links.get(i).equals(l))
 //                    links.remove(l);
 //            }
 //        }
+    }
+    
+    public void removeDuplicates(List<Hyperlinks> list) {
+        for (int j = 0; j < list.size(); j++) {
+            for (int i = j + 1; i < list.size() - 1; i++) {
+                if (list.get(j).equals(list.get(i))) {
+                    list.remove(i);
+                    i--;
+                }
+            }
+        }
     }
 
     private static void print(String msg, Object... args) {

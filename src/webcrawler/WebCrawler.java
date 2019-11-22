@@ -74,16 +74,17 @@ public class WebCrawler {
 
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
         SpiderLeg wc = new SpiderLeg();
+        List<Hyperlinks> list = new ArrayList<>();
         wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited);
         if (linksNotVisited.isEmpty()) {
             System.out.println("**** SORRY BUT THE PAGE " + pagesVisited.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
         } else {
             int count = 0;
-            while (pagesVisited.size() < getMaxPagesToSearch()) {
+            while (pagesVisited.size() <= getMaxPagesToSearch()) {
                 if (linksNotVisited.isEmpty()) {
                     wc.openUrlAndShowTitleAndLinks(linksVisited.get(1).getLink(), pagesVisited, linksNotVisited);
                 } else {
-                    wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited);
+                    wc.openUrlAndShowTitleAndLinks(linksNotVisited.get(0).getLink(), pagesVisited, linksNotVisited);
                     Hyperlinks link = linksNotVisited.get(0);
                     linksNotVisited.remove(0);
                     linksVisited.add(link);
@@ -101,13 +102,14 @@ public class WebCrawler {
         }
 
         addRelation();
+        toString();
     }
 
     public void addRelation() throws PageTitleException, HyperlinksException {
         try {
             int count = 1;
             for (int j = 0; j < linksVisited.size(); j++) {
-                addHyperLinks(pagesVisited.get(0), pagesVisited.get(count++), linksVisited.get(j));
+                    addHyperLinks(pagesVisited.get(0), pagesVisited.get(count++), linksVisited.get(j));
             }
         } catch (InvalidEdgeException ex) {
             throw new HyperlinksException("Link with the name does not exist");
@@ -186,7 +188,7 @@ public class WebCrawler {
                 if (a1.equals(a2)) {
                     break;
                 }
-                str += "\n \t" + "[" + a1.element().getPageTitleName() + "]" + " TO " + "[" + a2.element().getPageTitleName() + "]" + "\n";
+                str += "\n \t" + "[" + a2.element().getPageTitleName() + "]" + " TO " + "[" + a1.element().getPageTitleName() + "]" + "\n";
                 try {
                     if (getHyperlinksesBetween(a1.element(), a2.element()).isEmpty()) {
                         str += "\t (NO LINKS) \n";

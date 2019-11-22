@@ -12,7 +12,7 @@ import java.util.Objects;
  * @author bernardo
  */
 public class Hyperlinks {
-    private int id = 0;
+    private int id;
     private static int count = 0; 
     private final double distance;
     private String name;
