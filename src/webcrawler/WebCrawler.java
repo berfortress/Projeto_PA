@@ -108,11 +108,11 @@ public class WebCrawler {
             }
         }
         
-        for(Hyperlinks l: linksNotVisited){
-            System.out.println(l.getId() + " " + l.getName() + " " + l.getLink());
-        }
-
-        addRelation();
+//        for(Hyperlinks l: linksNotVisited){
+//            System.out.println(l.getId() + " " + l.getName() + " " + l.getLink());
+//        }
+//
+//        addRelation();
     }
 
     public void addRelation() throws PageTitleException, HyperlinksException {
