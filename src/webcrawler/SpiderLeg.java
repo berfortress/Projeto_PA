@@ -6,7 +6,10 @@
 package webcrawler;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,11 +21,10 @@ import org.jsoup.select.Elements;
  */
 public class SpiderLeg {
 
-    public void openUrlAndShowTitleAndLinks(String urlAddress, List<PageTitle> pageTitle, List<Hyperlinks> link) throws IOException {
+    public List<Hyperlinks> openUrlAndShowTitleAndLinks(String urlAddress, List<PageTitle> pageTitle, List<Hyperlinks> link, List<Hyperlinks> visitedLinks) throws IOException {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
             String title = doc.title();
-
             Elements links = doc.select("a[href]");
             if (title.isEmpty()) {
                 pageTitle.add(new PageTitle("404 - Not Found", urlAddress));
@@ -31,19 +33,24 @@ public class SpiderLeg {
             }
             for (Element l : links) {
                 if (l.text().isEmpty()) {
-                    link.add(new Hyperlinks("-----", l.attr("abs:href")));
+                    link.add(new Hyperlinks("No Description", l.attr("abs:href")));
                 } else {
                     link.add(new Hyperlinks(l.text(), l.attr("abs:href")));
                 }
             }
-            removeRepeatedLinks(link);
-//            for (Hyperlinks l : link) {
-//                System.out.println(l.getName() + " " + l.getLink());
-//            }
+            ArrayList<Hyperlinks> newList = (ArrayList<Hyperlinks>) removeRepeatedLinks(link);
+            link = newList;       
 
         } catch (IOException ex) {
             System.out.println("HTTP request error" + ex);
         }
+        
+        for (int i = 0; i < visitedLinks.size(); i++) {
+                if (visitedLinks.get(i).getLink().equals(link.get(i).getLink())) {
+                    link.remove(i);
+                }
+            }
+        return link;
     }
 
     public void openUrlAndShowTitle(String urlAddress, List<PageTitle> pageTitle) throws IOException {
@@ -51,7 +58,6 @@ public class SpiderLeg {
             Document doc = Jsoup.connect(urlAddress).get();
             String title = doc.title();
 
-            Elements links = doc.select("a[href]");
             if (title.isEmpty()) {
                 pageTitle.add(new PageTitle("404 - Not Found", urlAddress));
             } else {
@@ -62,50 +68,66 @@ public class SpiderLeg {
         }
     }
 
-    private void removeAfterCharacters(List<Hyperlinks> links, Hyperlinks link, String url, String characters) {
+    private void removeAfterCharacters(Hyperlinks link, String url, String characters) {
         int indexOf;
         int urlSize;
         if (characters.equalsIgnoreCase("#")) {
             indexOf = url.indexOf(characters);
             if (indexOf > -1) {
                 url = url.substring(0, indexOf);
-                if (url.compareToIgnoreCase(link.getLink()) == 0) {
-                    links.remove((link.getLink() == null ? url == null : link.getLink().equals(url)));
-                }
+                link.setLink(url);
             }
         }
+
         if (characters.equalsIgnoreCase("/")) {
             indexOf = url.lastIndexOf(characters);
             urlSize = url.length();
-            if (urlSize >= indexOf + 1) {
-                links.remove(link);
+            if (urlSize == indexOf + 1) {
+                url = url.substring(0, indexOf);
+                link.setLink(url);
+            }
+        }
+
+        if (characters.equalsIgnoreCase("&")) {
+            indexOf = url.indexOf(characters);
+            if (indexOf > -1) {
+                url = url.substring(0, indexOf);
+                link.setLink(url);
             }
         }
 
     }
 
-    private void removeRepeatedLinks(List<Hyperlinks> links) {
-
+    private List<Hyperlinks> removeRepeatedLinks(List<Hyperlinks> links) {
         for (int i = 0; i < links.size(); i++) {
+            String s1 = links.get(i).getLink();
+            removeAfterCharacters(links.get(i), s1, "#");
+            removeAfterCharacters(links.get(i), s1, "/");
+            removeAfterCharacters(links.get(i), s1, "&");
+
             for (int j = i + 1; j < links.size(); j++) {
-                String s1 = links.get(j).getLink();
-                removeAfterCharacters(links, links.get(i), s1, "#");
-                removeAfterCharacters(links, links.get(i), s1, "/");
-
-                if (links.contains(s1)) {
-                    links.remove(i);
+                if (links.get(i).getLink().equals(links.get(j).getLink())) {
+                    links.remove(j);
                 }
-
             }
         }
+        Set<Hyperlinks> newList = new HashSet<>(links);
+        List<Hyperlinks> list = new ArrayList<>(newList);
+        bubbleSort(list);
         
-
-        for (Hyperlinks l : links) {
-            System.out.println(l.getLink());
-        }
+        return list;
     }
 
-    private static void print(String msg, Object... args) {
-        System.out.println(String.format(msg, args));
+    public List<Hyperlinks> bubbleSort(List<Hyperlinks> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = 0; j < list.size() - i - 1; j++) {
+                if (list.get(j).getId() > list.get(j + 1).getId()) {
+                    Hyperlinks temp = list.get(j);
+                    list.set(j, list.get(j + 1));
+                    list.set(j + 1, temp);
+                }
+            }
+        }
+        return list;
     }
 }

@@ -56,22 +56,20 @@ public class Hyperlinks {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+       if (obj == this) {
             return true;
         }
-        if (obj == null) {
+        if (!(obj instanceof Hyperlinks)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Hyperlinks other = (Hyperlinks) obj;
-        if (this.id != other.getId()) {
-            return false;
-        }
-        if (this.distance != other.distance) {
-            return false;
-        }
-        return true;
+        Hyperlinks other = (Hyperlinks) obj;
+        return this.link.equals(other.link);
     }
+
+    @Override
+    public int hashCode() {
+        return link.hashCode();
+    }
+    
+    
 }

@@ -74,16 +74,24 @@ public class WebCrawler {
 
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
         SpiderLeg wc = new SpiderLeg();
-        wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited);
+        linksVisited.add(new Hyperlinks("Initial URL ", url));
+        linksNotVisited = wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited,linksVisited);
+        for (int i = 0; i < linksNotVisited.size(); i++) {
+            if (linksNotVisited.get(i).getLink().equals(linksVisited.get(0).getLink())) {
+                linksNotVisited.remove(i);
+            }
+        }
         if (linksNotVisited.isEmpty()) {
             System.out.println("**** SORRY BUT THE PAGE " + pagesVisited.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
         } else {
             int count = 0;
+            int i = 1;
             while (pagesVisited.size() < getMaxPagesToSearch()) {
                 if (linksNotVisited.isEmpty()) {
-                    wc.openUrlAndShowTitleAndLinks(linksVisited.get(1).getLink(), pagesVisited, linksNotVisited);
+                    linksNotVisited = wc.openUrlAndShowTitleAndLinks(linksVisited.get(i).getLink(), pagesVisited, linksNotVisited,linksVisited);
+                    i++;
                 } else {
-                    wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited);
+                    wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited);                       
                     Hyperlinks link = linksNotVisited.get(0);
                     linksNotVisited.remove(0);
                     linksVisited.add(link);
@@ -98,6 +106,10 @@ public class WebCrawler {
             } catch (InvalidVertexException ex) {
                 throw new PageTitleException("Website with name does not exist");
             }
+        }
+        
+        for(Hyperlinks l: linksNotVisited){
+            System.out.println(l.getId() + " " + l.getName() + " " + l.getLink());
         }
 
         addRelation();
@@ -202,7 +214,13 @@ public class WebCrawler {
 
         str += "\nNº Páginas Totais " + getPagesVisited().size();
         for (int i = 0; i < getPagesVisited().size(); i++) {
-            str += "\nPáginas Visitadas " + pagesVisited.get(i);
+            str += "\nPáginas Visitadas ";
+            if (i == 0) {
+                str += pagesVisited.get(0) + " [ INICIAL ]";
+            } else {
+                str += pagesVisited.get(i);
+            }
+
         }
         str += "\nNº Links Visitados " + getLinksVisited().size() + "\nLinks Visitados " + getLinksVisited() + "\nNº Links Não Visitados "
                 + getLinksNotVisited().size() + "\nLinks Não Visitados " + getLinksNotVisited() + "\nVertices" + graph.vertices() + "\nEdges" + graph.edges();
@@ -227,8 +245,6 @@ public class WebCrawler {
         HashMap<Vertex<PageTitle>, Vertex<PageTitle>> predecessors = new HashMap();
         HashMap<Vertex<PageTitle>, Edge<Hyperlinks, PageTitle>> edgesP = new HashMap();
 
-        //pontos.clear();
-        //path.clear();
         Vertex<PageTitle> iVertex = getVertex(orig);
 
         if (iVertex != null) {
@@ -298,6 +314,5 @@ public class WebCrawler {
             }
         }
         return minCostVertex;
-
     }
 }
