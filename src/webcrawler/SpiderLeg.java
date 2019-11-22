@@ -6,11 +6,16 @@
 package webcrawler;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import static java.util.Comparator.comparingInt;
+import java.util.TreeSet;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  *
@@ -74,6 +79,7 @@ public class SpiderLeg {
                 }
             }
         }
+        
         if (characters.equalsIgnoreCase("/")) {
             indexOf = url.lastIndexOf(characters);
             urlSize = url.length();
@@ -81,28 +87,31 @@ public class SpiderLeg {
                 links.remove(link);
             }
         }
-
+        
+        if (url.compareToIgnoreCase(link.getLink()) == 0) {
+            links.remove((link.getLink().equals(url)));
+        }
     }
 
     private void removeRepeatedLinks(List<Hyperlinks> links) {
 
         for (int i = 0; i < links.size(); i++) {
             for (int j = i + 1; j < links.size(); j++) {
-                String s1 = links.get(j).getLink();
-                removeAfterCharacters(links, links.get(i), s1, "#");
-                removeAfterCharacters(links, links.get(i), s1, "/");
+//                String s1 = links.get(j).getLink();
+                removeAfterCharacters(links, links.get(i), links.get(j).getLink(), "#");
+                removeAfterCharacters(links, links.get(i), links.get(j).getLink(), "/");
 
-                if (links.contains(s1)) {
-                    links.remove(i);
-                }
-
+//                if(links.get(i).getLink().equals(links.get(j).getLink()))
+//                    links.remove(j);
             }
         }
         
-
-        for (Hyperlinks l : links) {
-            System.out.println(l.getLink());
-        }
+//        for (int i = 0; i < links.size(); i++) {
+//            for (Hyperlinks l : links) {
+//                if(links.get(i).equals(l))
+//                    links.remove(l);
+//            }
+//        }
     }
 
     private static void print(String msg, Object... args) {

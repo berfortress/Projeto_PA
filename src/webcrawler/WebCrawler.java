@@ -113,7 +113,11 @@ public class WebCrawler {
             throw new HyperlinksException("Link with the name does not exist");
         }
     }
-
+    
+    public void addRelation2(String url) throws IOException, PageTitleException, HyperlinksException{
+        search(url);
+    }
+    
     public void addPageTitle(PageTitle page) throws PageTitleException {
         try {
             graph.insertVertex(page);
