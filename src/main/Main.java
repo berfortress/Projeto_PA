@@ -36,6 +36,7 @@ public class Main {
                 WebCrawler wc = new WebCrawler(maxNum);             
 //                wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
                 wc.search(url);
+                wc.addBFS();
                 if(!wc.getLinksVisited().isEmpty() || maxNum >=1 ){
                   System.out.println(wc.toString());
                 }
