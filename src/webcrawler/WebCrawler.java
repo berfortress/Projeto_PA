@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import enums.Criteria;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
@@ -35,12 +36,12 @@ public class WebCrawler {
     private List<Hyperlinks> linksNotVisited;
     private int maxPagesToSearch;
     private List<PageTitle> pagesVisited;
-    private final Digraph<PageTitle, Hyperlinks> graph;
+    private final Digraph<PageTitle, Hyperlinks> digraph;
     private Map<Hyperlinks, PageTitle> hype;
 
     public WebCrawler(int maxPagesToSearch) {
         this.maxPagesToSearch = maxPagesToSearch;
-        this.graph = new GraphEdgeList<>();
+        this.digraph = new GraphEdgeList<>();
         this.linksVisited = new ArrayList<>();
         this.linksNotVisited = new ArrayList<>();
         this.pagesVisited = new ArrayList<>();
@@ -49,7 +50,7 @@ public class WebCrawler {
 
     public WebCrawler() {
         this.maxPagesToSearch = 4;
-        this.graph = new GraphEdgeList<>();
+        this.digraph = new GraphEdgeList<>();
         this.linksVisited = new ArrayList<>();
         this.linksNotVisited = new ArrayList<>();
         this.pagesVisited = new ArrayList<>();
@@ -77,34 +78,35 @@ public class WebCrawler {
     }
 
     public Iterable<Vertex<PageTitle>> getAllPageTitle() {
-        return graph.vertices();
+        return digraph.vertices();
     }
-    
-        public Iterable<Vertex<PageTitle>> getAdjacents(Vertex<PageTitle> page) throws PageTitleException{
-        
+
+    public Iterable<Vertex<PageTitle>> getAdjacents(Vertex<PageTitle> page) throws PageTitleException {
+
         checkPageTitle(page.element());
         List<Vertex<PageTitle>> pa = new ArrayList<>();
-                
-        for(Edge<Hyperlinks, PageTitle> p : graph.incidentEdges(page)){
-            pa.add(graph.opposite(page, p));
+
+        for (Edge<Hyperlinks, PageTitle> p : digraph.incidentEdges(page)) {
+            System.out.println("---------------------------");
+            pa.add(digraph.opposite(page, p));
         }
-        
+
         return pa;
     }
-    
-    private Iterable<PageTitle> BFS(Vertex<PageTitle> v) throws PageTitleException{
+
+    private Iterable<PageTitle> BFS(Vertex<PageTitle> v) throws PageTitleException {
         List<PageTitle> path = new ArrayList<>();
         Set<Vertex<PageTitle>> visited = new HashSet<>();
         Queue<Vertex<PageTitle>> queue = new LinkedList<>();
-        
+
         visited.add(v);
         queue.add(v);
-        
-        while(!queue.isEmpty()){
+
+        while (!queue.isEmpty()) {
             Vertex<PageTitle> vLook = queue.remove();
             path.add(vLook.element());
-            for(Vertex<PageTitle> vAdj : getAdjacents(vLook)){
-                if(!visited.add(v)){
+            for (Vertex<PageTitle> vAdj : getAdjacents(vLook)) {
+                if (!visited.add(v)) {
                     visited.add(vAdj);
                     queue.add(vAdj);
                 }
@@ -114,73 +116,103 @@ public class WebCrawler {
     }
 
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
-        SpiderLeg wc = new SpiderLeg();
-        List<Hyperlinks> v = new ArrayList<>();
-        List<Hyperlinks> nv = new ArrayList<>();
-        List<PageTitle> pv = new ArrayList<>();
-        
-        nv = wc.openUrlAndShowTitleAndLinks(url, pv, nv, v);
-        v.add(new Hyperlinks("Initial URL ", url));
-        for (int i = 0; i < nv.size(); i++) {
-            if (nv.get(i).getLink().equals(v.get(0).getLink())) {
-                nv.remove(i);
-            }
-        }
-        if (nv.isEmpty()) {
-            System.out.println("**** SORRY BUT THE PAGE " + pv.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
-        } else {
-            int count = 0;
-            int i = 1;
-            while (!nv.isEmpty()) {
-                if (nv.isEmpty()) {
-                    nv = wc.openUrlAndShowTitleAndLinks(v.get(i).getLink(), pv, nv, v);
-                    i++;
-                } else {
-                    wc.openUrlAndShowTitle(nv.get(0).getLink(), pv);                       
-                    Hyperlinks link = nv.get(0);
-                    nv.remove(0);
-                    v.add(link);
-                    linksVisited.add(link);
-                    count++;
+        if (!linksVisited.contains(url)) {
+            SpiderLeg wc = new SpiderLeg();
+            List<Hyperlinks> v = new ArrayList<>();
+            List<Hyperlinks> nv = new ArrayList<>();
+            List<PageTitle> pv = new ArrayList<>();
+
+            nv = wc.openUrlAndShowTitleAndLinks(url, pv, nv, v);
+            v.add(new Hyperlinks("Initial URL ", url));
+            for (int i = 0; i < nv.size(); i++) {
+                if (nv.get(i).getLink().equals(v.get(0).getLink())) {
+                    nv.remove(i);
                 }
             }
-        }
-
-        for (PageTitle p : pv) {
-            try {
-                pagesVisited.add(p);
-                addPageTitle(p);
-            } catch (InvalidVertexException ex) {
-                throw new PageTitleException("Website with name does not exist");
+            if (nv.isEmpty()) {
+                System.out.println("**** SORRY BUT THE PAGE " + pv.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
+            } else {
+                int count = 0;
+                int i = 1;
+                while (!nv.isEmpty()) {
+                    if (nv.isEmpty()) {
+                        nv = wc.openUrlAndShowTitleAndLinks(v.get(i).getLink(), pv, nv, v);
+                        i++;
+                    } else {
+                        wc.openUrlAndShowTitle(nv.get(0).getLink(), pv);
+                        Hyperlinks link = nv.get(0);
+                        nv.remove(0);
+                        v.add(link);
+                        linksVisited.add(link);
+                        count++;
+                    }
+                }
             }
-        }
-        
+
+            for (PageTitle p : pv) {
+                try {
+                    pagesVisited.add(p);
+                    addPageTitle(p);
+                } catch (InvalidVertexException ex) {
+                    throw new PageTitleException("Website with name does not exist");
+                }
+            }
+
 //        for(Hyperlinks l: linksNotVisited){
 //            System.out.println(l.getId() + " " + l.getName() + " " + l.getLink());
 //        }
-        //addRelation(hype);
-        addRelation(pv, v);
+            //addRelation(hype);
+            addRelation(pv, v);
+        } else {
+            addBFS();
+        }
     }
-    
+
     public void addRelation(List<PageTitle> pagesVisited, List<Hyperlinks> linksVisited) throws PageTitleException, HyperlinksException {
         try {
             int count = 1;
-            for(int j = 1; j < pagesVisited.size(); j++){
+            for (int j = 1; j < pagesVisited.size(); j++) {
 //                for(Hyperlinks hl : linksVisited){
 //                    if(hl.equals1(pagesVisited.get(j).getPageAddress()))
-                        addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(j));
-                        
-                }
-                count++;
+                addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(j));
+
+            }
+            count++;
 //            }
         } catch (InvalidEdgeException ex) {
             throw new HyperlinksException("Link with the name does not exist");
         }
     }
 
+    public void addBFS() throws PageTitleException, IOException, HyperlinksException {
+
+        Vertex<PageTitle> pa = null;
+
+        for (Vertex<PageTitle> p : digraph.vertices()) {
+            if (p.element().getId() == 1) {
+                pa = p;
+            }
+        }
+        List<PageTitle> list = new ArrayList<>();
+        int count = 1;
+        while (list.size() < getMaxPagesToSearch()) {
+            list.add(pagesVisited.get(count++));
+        }
+        System.out.println("----------------------------------------------------------------------");
+        System.out.println(list);
+        System.out.println("----------------------------------------------------------------------");
+
+        for (PageTitle p : list) {
+            search(p.getPageAddress());
+        }
+
+        //Iterable<PageTitle> it = BFS(pa);
+        //System.out.println("=========================="+it);
+    }
+
     public void addPageTitle(PageTitle page) throws PageTitleException {
         try {
-            graph.insertVertex(page);
+            digraph.insertVertex(page);
         } catch (InvalidVertexException e) {
             throw new PageTitleException("Website with name " + page.getPageTitleName() + " does not exist");
         }
@@ -196,7 +228,7 @@ public class WebCrawler {
         Vertex<PageTitle> a2 = checkPageTitle(page2);
 
         try {
-            graph.insertEdge(a1, a2, link);
+            digraph.insertEdge(a1, a2, link);
         } catch (InvalidVertexException e) {
             throw new PageTitleException("The Hyperlink " + link.toString() + " already exists");
         }
@@ -209,7 +241,7 @@ public class WebCrawler {
         }
 
         Vertex<PageTitle> find = null;
-        for (Vertex<PageTitle> v : graph.vertices()) {
+        for (Vertex<PageTitle> v : digraph.vertices()) {
             if (v.element().equals(page)) { //equals was overriden in PageTitle!!
                 find = v;
             }
@@ -226,12 +258,12 @@ public class WebCrawler {
         Vertex<PageTitle> p1 = checkPageTitle(page1);
         Vertex<PageTitle> p2 = checkPageTitle(page2);
         List<Hyperlinks> list = new ArrayList<>();
-        if (!graph.areAdjacent(p1, p2)) {
+        if (!digraph.areAdjacent(p1, p2)) {
             return list;
         }
-        Iterable<Edge<Hyperlinks, PageTitle>> it = graph.incidentEdges(p1);
+        Iterable<Edge<Hyperlinks, PageTitle>> it = digraph.incidentEdges(p1);
         for (Edge<Hyperlinks, PageTitle> edge : it) {
-            if (graph.opposite(p1, edge) == p2) {
+            if (digraph.opposite(p1, edge) == p2) {
                 list.add(edge.element());
             }
         }
@@ -240,9 +272,9 @@ public class WebCrawler {
 
     @Override
     public String toString() {
-        String str = "WEB CRAWLER (" + graph.numVertices() + " pagesTitles | " + graph.numEdges() + " links) \n";
-        for (Vertex<PageTitle> a1 : graph.vertices()) {
-            for (Vertex<PageTitle> a2 : graph.vertices()) {
+        String str = "WEB CRAWLER (" + digraph.numVertices() + " pagesTitles | " + digraph.numEdges() + " links) \n";
+        for (Vertex<PageTitle> a1 : digraph.vertices()) {
+            for (Vertex<PageTitle> a2 : digraph.vertices()) {
                 if (a1.equals(a2)) {
                     break;
                 }
@@ -275,12 +307,12 @@ public class WebCrawler {
 
         }
         str += "\nNº Links Visitados " + getLinksVisited().size() + "\nLinks Visitados " + getLinksVisited() + "\nNº Links Não Visitados "
-                + getLinksNotVisited().size() + "\nLinks Não Visitados " + getLinksNotVisited() + "\nVertices" + graph.vertices() + "\nEdges" + graph.edges();
+                + getLinksNotVisited().size() + "\nLinks Não Visitados " + getLinksNotVisited() + "\nVertices" + digraph.vertices() + "\nEdges" + digraph.edges();
         return str;
     }
 
     private Vertex<PageTitle> getVertex(PageTitle pi) {
-        for (Vertex<PageTitle> ap : graph.vertices()) {
+        for (Vertex<PageTitle> ap : digraph.vertices()) {
             if (ap.element().equals(pi)) {
                 return ap;
             }
@@ -325,7 +357,7 @@ public class WebCrawler {
 
         List<Vertex<PageTitle>> unvisited = new ArrayList();
 
-        for (Vertex<PageTitle> page2 : graph.vertices()) {
+        for (Vertex<PageTitle> page2 : digraph.vertices()) {
             unvisited.add(page2);
             costs.put(page2, Double.MAX_VALUE);
             predecessors.put(page2, null);
@@ -336,8 +368,8 @@ public class WebCrawler {
         while (!unvisited.isEmpty()) {
             Vertex<PageTitle> lowCostVertex = findLowerCostVertex(unvisited, costs);
             unvisited.remove(lowCostVertex);
-            for (Edge<Hyperlinks, PageTitle> conexao : graph.incidentEdges(lowCostVertex)) {
-                Vertex<PageTitle> opposite = graph.opposite(lowCostVertex, conexao);
+            for (Edge<Hyperlinks, PageTitle> conexao : digraph.incidentEdges(lowCostVertex)) {
+                Vertex<PageTitle> opposite = digraph.opposite(lowCostVertex, conexao);
                 if (unvisited.contains(opposite)) {
 
                     double rotaCusto = 0;
