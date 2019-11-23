@@ -104,55 +104,53 @@ public class WebCrawler {
     }
 
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
-            SpiderLeg wc = new SpiderLeg();
-            List<Hyperlinks> visitedLinks = new ArrayList<>();
-            List<Hyperlinks> notVisitedLinks = new ArrayList<>();
-            List<PageTitle> pages = new ArrayList<>();
+        SpiderLeg wc = new SpiderLeg();
+        //List<Hyperlinks> visitedLinks = new ArrayList<>();
+        List<Hyperlinks> notVisitedLinks = new ArrayList<>();
+        List<PageTitle> pages = new ArrayList<>();
 
-            notVisitedLinks = wc.openUrlAndShowTitleAndLinks(url, pages, notVisitedLinks, visitedLinks);
-            visitedLinks.add(new Hyperlinks("Initial URL ", url));
-            for (int i = 0; i < notVisitedLinks.size(); i++) {
-                if (notVisitedLinks.get(i).getLink().equals(visitedLinks.get(0).getLink())) {
-                    notVisitedLinks.remove(i);
-                }
+        notVisitedLinks = wc.openUrlAndShowTitleAndLinks(url, pages, notVisitedLinks, linksVisitedTotal);
+        linksVisitedTotal.add(new Hyperlinks("Initial URL ", url));
+        List<Hyperlinks> visitedLinks = new ArrayList<>(notVisitedLinks);
+        for (int i = 0; i < notVisitedLinks.size(); i++) {
+            if (notVisitedLinks.get(i).getLink().equals(linksVisitedTotal.get(0).getLink())) {
+                notVisitedLinks.remove(i);
             }
-            if (notVisitedLinks.isEmpty()) {
-                System.out.println("**** SORRY BUT THE PAGE " + pages.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
-            } else {
-                for(int i = 0; i< linksVisitedTotal.size(); i++){
-                    for(int j = i; j < notVisitedLinks.size(); j++){
-                        if(linksVisitedTotal.contains(notVisitedLinks.get(j))){
-                            notVisitedLinks.remove(j);
-                        }
-                    }       
-                }
-                System.out.println(notVisitedLinks);
-                int count = 0;
-                int i = 1;
-                while (!notVisitedLinks.isEmpty()) {
-                    if (notVisitedLinks.isEmpty()) {
-                        notVisitedLinks = wc.openUrlAndShowTitleAndLinks(visitedLinks.get(i).getLink(), pages, notVisitedLinks, visitedLinks);
-                        i++;
-                    } else {
-                        wc.openUrlAndShowTitle(notVisitedLinks.get(0).getLink(), pages);
-                        Hyperlinks link = notVisitedLinks.get(0);
-                        notVisitedLinks.remove(0);
-                        visitedLinks.add(link);
-                        linksVisitedTotal.add(link);
-                        count++;
+        }
+
+        if (linksVisitedTotal.size() > 0) {
+            for (int i = 0; i < linksVisitedTotal.size(); i++) {
+                for (int j = 1; j < notVisitedLinks.size(); j++) {
+                    if (linksVisitedTotal.contains(notVisitedLinks.get(j))) {
+                        notVisitedLinks.remove(j);
                     }
                 }
             }
-
-            for (PageTitle p : pages) {
-                try {
-                    pagesVisited.add(p);
-                    addPageTitle(p);
-                } catch (InvalidVertexException ex) {
-                    throw new PageTitleException("Website with name does not exist");
-                }
+        }
+        if (notVisitedLinks.isEmpty()) {
+            System.out.println("**** SORRY BUT THE PAGE " + pages.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
+        } else {
+            System.out.println(notVisitedLinks);
+            int count = 0;
+            int i = 1;
+            while (!notVisitedLinks.isEmpty()) {
+                wc.openUrlAndShowTitle(notVisitedLinks.get(0).getLink(), pages);
+                Hyperlinks link = notVisitedLinks.get(0);
+                notVisitedLinks.remove(0);
+                linksVisitedTotal.add(link);
+                count++;
             }
-            addRelation(pages, visitedLinks);
+        }
+
+        for (PageTitle p : pages) {
+            try {
+                pagesVisited.add(p);
+                addPageTitle(p);
+            } catch (InvalidVertexException ex) {
+                throw new PageTitleException("Website with name does not exist");
+            }
+        }
+        addRelation(pages, visitedLinks);
     }
 
     public void addRelation(List<PageTitle> pagesVisited, List<Hyperlinks> linksVisited) throws PageTitleException, HyperlinksException {
