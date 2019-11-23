@@ -69,7 +69,7 @@ public class Hyperlinks {
 
     @Override
     public String toString() {
-        return link;
+        return "ID " + getId();
     }
 
     @Override
