@@ -5,6 +5,7 @@
  */
 package webcrawler;
 
+import adtgraph.Digraph;
 import java.util.List;
 import adtgraph.Edge;
 import adtgraph.Graph;
@@ -17,6 +18,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import enums.Criteria;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +35,8 @@ public class WebCrawler {
     private List<Hyperlinks> linksNotVisited;
     private int maxPagesToSearch;
     private List<PageTitle> pagesVisited;
-    private final Graph<PageTitle, Hyperlinks> graph;
+    private final Digraph<PageTitle, Hyperlinks> graph;
+    private Map<Hyperlinks, PageTitle> hype;
 
     public WebCrawler(int maxPagesToSearch) {
         this.maxPagesToSearch = maxPagesToSearch;
@@ -38,6 +44,7 @@ public class WebCrawler {
         this.linksVisited = new ArrayList<>();
         this.linksNotVisited = new ArrayList<>();
         this.pagesVisited = new ArrayList<>();
+        this.hype = new HashMap<>();
     }
 
     public WebCrawler() {
@@ -46,6 +53,7 @@ public class WebCrawler {
         this.linksVisited = new ArrayList<>();
         this.linksNotVisited = new ArrayList<>();
         this.pagesVisited = new ArrayList<>();
+        this.hype = new HashMap<>();
     }
 
     public List<PageTitle> getPagesVisited() {
@@ -71,37 +79,76 @@ public class WebCrawler {
     public Iterable<Vertex<PageTitle>> getAllPageTitle() {
         return graph.vertices();
     }
+    
+        public Iterable<Vertex<PageTitle>> getAdjacents(Vertex<PageTitle> page) throws PageTitleException{
+        
+        checkPageTitle(page.element());
+        List<Vertex<PageTitle>> pa = new ArrayList<>();
+                
+        for(Edge<Hyperlinks, PageTitle> p : graph.incidentEdges(page)){
+            pa.add(graph.opposite(page, p));
+        }
+        
+        return pa;
+    }
+    
+    private Iterable<PageTitle> BFS(Vertex<PageTitle> v) throws PageTitleException{
+        List<PageTitle> path = new ArrayList<>();
+        Set<Vertex<PageTitle>> visited = new HashSet<>();
+        Queue<Vertex<PageTitle>> queue = new LinkedList<>();
+        
+        visited.add(v);
+        queue.add(v);
+        
+        while(!queue.isEmpty()){
+            Vertex<PageTitle> vLook = queue.remove();
+            path.add(vLook.element());
+            for(Vertex<PageTitle> vAdj : getAdjacents(vLook)){
+                if(!visited.add(v)){
+                    visited.add(vAdj);
+                    queue.add(vAdj);
+                }
+            }
+        }
+        return path;
+    }
 
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
         SpiderLeg wc = new SpiderLeg();
-        linksVisited.add(new Hyperlinks("Initial URL ", url));
-        linksNotVisited = wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited,linksVisited);
-        for (int i = 0; i < linksNotVisited.size(); i++) {
-            if (linksNotVisited.get(i).getLink().equals(linksVisited.get(0).getLink())) {
-                linksNotVisited.remove(i);
+        List<Hyperlinks> v = new ArrayList<>();
+        List<Hyperlinks> nv = new ArrayList<>();
+        List<PageTitle> pv = new ArrayList<>();
+        
+        nv = wc.openUrlAndShowTitleAndLinks(url, pv, nv, v);
+        v.add(new Hyperlinks("Initial URL ", url));
+        for (int i = 0; i < nv.size(); i++) {
+            if (nv.get(i).getLink().equals(v.get(0).getLink())) {
+                nv.remove(i);
             }
         }
-        if (linksNotVisited.isEmpty()) {
-            System.out.println("**** SORRY BUT THE PAGE " + pagesVisited.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
+        if (nv.isEmpty()) {
+            System.out.println("**** SORRY BUT THE PAGE " + pv.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
         } else {
             int count = 0;
             int i = 1;
-            while (pagesVisited.size() < getMaxPagesToSearch()) {
-                if (linksNotVisited.isEmpty()) {
-                    linksNotVisited = wc.openUrlAndShowTitleAndLinks(linksVisited.get(i).getLink(), pagesVisited, linksNotVisited,linksVisited);
+            while (!nv.isEmpty()) {
+                if (nv.isEmpty()) {
+                    nv = wc.openUrlAndShowTitleAndLinks(v.get(i).getLink(), pv, nv, v);
                     i++;
                 } else {
-                    wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited);                       
-                    Hyperlinks link = linksNotVisited.get(0);
-                    linksNotVisited.remove(0);
+                    wc.openUrlAndShowTitle(nv.get(0).getLink(), pv);                       
+                    Hyperlinks link = nv.get(0);
+                    nv.remove(0);
+                    v.add(link);
                     linksVisited.add(link);
                     count++;
                 }
             }
         }
 
-        for (PageTitle p : pagesVisited) {
+        for (PageTitle p : pv) {
             try {
+                pagesVisited.add(p);
                 addPageTitle(p);
             } catch (InvalidVertexException ex) {
                 throw new PageTitleException("Website with name does not exist");
@@ -111,16 +158,21 @@ public class WebCrawler {
 //        for(Hyperlinks l: linksNotVisited){
 //            System.out.println(l.getId() + " " + l.getName() + " " + l.getLink());
 //        }
-//
-//        addRelation();
+        //addRelation(hype);
+        addRelation(pv, v);
     }
-
-    public void addRelation() throws PageTitleException, HyperlinksException {
+    
+    public void addRelation(List<PageTitle> pagesVisited, List<Hyperlinks> linksVisited) throws PageTitleException, HyperlinksException {
         try {
             int count = 1;
-            for (int j = 0; j < linksVisited.size(); j++) {
-                addHyperLinks(pagesVisited.get(0), pagesVisited.get(count++), linksVisited.get(j));
-            }
+            for(int j = 1; j < pagesVisited.size(); j++){
+//                for(Hyperlinks hl : linksVisited){
+//                    if(hl.equals1(pagesVisited.get(j).getPageAddress()))
+                        addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(j));
+                        
+                }
+                count++;
+//            }
         } catch (InvalidEdgeException ex) {
             throw new HyperlinksException("Link with the name does not exist");
         }
@@ -194,11 +246,11 @@ public class WebCrawler {
                 if (a1.equals(a2)) {
                     break;
                 }
-                str += "\n \t" + "[" + a1.element().getPageTitleName() + "]" + " TO " + "[" + a2.element().getPageTitleName() + "]" + "\n";
                 try {
-                    if (getHyperlinksesBetween(a1.element(), a2.element()).isEmpty()) {
-                        str += "\t (NO LINKS) \n";
-                    } else {
+                    if (!getHyperlinksesBetween(a1.element(), a2.element()).isEmpty()) {
+//                        str += "\t (NO LINKS) \n";
+//                    } else {
+                        str += "\n \t" + "[" + a1.element().getPageTitleName() + "]" + " TO " + "[" + a2.element().getPageTitleName() + "]" + "\n";
                         List<Hyperlinks> l = new ArrayList<>();
                         l = getHyperlinksesBetween(a1.element(), a2.element());
                         for (int i = 0; i < l.size(); i++) {

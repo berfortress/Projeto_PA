@@ -21,6 +21,12 @@ public class PageTitle {
         this.pageAddress = pageAddress;
     }  
 
+    public PageTitle() {
+        this.id = ++count;
+        this.pageTitleName = "";
+        this.pageAddress = "";
+    }
+
     public String getPageTitleName() {
         return pageTitleName;
     }

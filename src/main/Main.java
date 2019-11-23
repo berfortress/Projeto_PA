@@ -29,9 +29,9 @@ public class Main {
             int option = myObj.nextInt();
             if(option == 1){
                 System.out.println("\n \n *************** MODO AUTOMÁTICO ********************");
-                System.out.println("Insira url : ");
+                System.out.print("Insira url : ");
                 String url = myObj.next();
-                System.out.println("Número máximo de páginas procuradas: ");
+                System.out.print("Número máximo de páginas procuradas: ");
                 int maxNum = myObj.nextInt();
                 WebCrawler wc = new WebCrawler(maxNum);             
 //                wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");

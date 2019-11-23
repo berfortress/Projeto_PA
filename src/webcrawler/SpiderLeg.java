@@ -22,14 +22,17 @@ import org.jsoup.select.Elements;
 public class SpiderLeg {
 
     public List<Hyperlinks> openUrlAndShowTitleAndLinks(String urlAddress, List<PageTitle> pageTitle, List<Hyperlinks> link, List<Hyperlinks> visitedLinks) throws IOException {
+        PageTitle page = null;
         try {
             Document doc = Jsoup.connect(urlAddress).get();
             String title = doc.title();
             Elements links = doc.select("a[href]");
             if (title.isEmpty()) {
-                pageTitle.add(new PageTitle("404 - Not Found", urlAddress));
+                page = new PageTitle("404 - Not Found", urlAddress);
+                pageTitle.add(page);
             } else {
-                pageTitle.add(new PageTitle(title, urlAddress));
+                page = new PageTitle(title, urlAddress);
+                pageTitle.add(page);
             }
             for (Element l : links) {
                 if (l.text().isEmpty()) {
@@ -38,7 +41,7 @@ public class SpiderLeg {
                     link.add(new Hyperlinks(l.text(), l.attr("abs:href")));
                 }
             }
-            ArrayList<Hyperlinks> newList = (ArrayList<Hyperlinks>) removeRepeatedLinks(link);
+            List<Hyperlinks> newList = removeRepeatedLinks(link);
             link = newList;       
 
         } catch (IOException ex) {

@@ -17,12 +17,30 @@ public class Hyperlinks {
     private final double distance;
     private String name;
     private String link;
+    private PageTitle page;
 
     public Hyperlinks(String name,String link) {
         this.id = ++count;
         this.name = name;
         this.link = link;
-        this.distance = 0;
+        this.distance = 1;
+        this.page = null;
+    }
+
+    public Hyperlinks() {
+        this.id = ++count;
+        this.name = "";
+        this.link = "";
+        this.distance = 1;
+        this.page = null;
+    }
+
+    public PageTitle getPage() {
+        return page;
+    }
+
+    public void setPage(PageTitle page) {
+        this.page = page;
     }
 
     public String getName() {
@@ -64,6 +82,17 @@ public class Hyperlinks {
         }
         Hyperlinks other = (Hyperlinks) obj;
         return this.link.equals(other.link);
+    }
+    
+    public boolean equals1(Object obj) {
+       if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Hyperlinks)) {
+            return false;
+        }
+        Hyperlinks other = (Hyperlinks) obj;
+        return this.name.equals(other.name);
     }
 
     @Override
