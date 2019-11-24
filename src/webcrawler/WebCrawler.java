@@ -246,11 +246,20 @@ public class WebCrawler {
                 throw new PageTitleException("Website with name does not exist");
             }
         }
+<<<<<<< HEAD
         addRelation(pages, visitedLinks);
 >>>>>>> parent of ec20cf1... Revert "Revert "Revert "Alterações"""
 =======
             addRelation(pages, visitedLinks);
 >>>>>>> parent of 16a1b7c... Alterações
+=======
+        
+        for(Hyperlinks l: linksNotVisited){
+            System.out.println(l.getId() + " " + l.getName() + " " + l.getLink());
+        }
+
+        addRelation();
+>>>>>>> parent of 416c778... Alterações GOD_FABI
     }
 
     public void addRelation(List<PageTitle> pagesVisited, List<Hyperlinks> linksVisited) throws PageTitleException, HyperlinksException {
