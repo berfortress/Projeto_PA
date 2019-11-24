@@ -106,6 +106,7 @@ public class WebCrawler {
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> parent of ec20cf1... Revert "Revert "Revert "Alterações"""
         SpiderLeg wc = new SpiderLeg();
@@ -121,6 +122,8 @@ public class WebCrawler {
                 notVisitedLinks.remove(i);
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of 16a1b7c... Alterações
             SpiderLeg wc = new SpiderLeg();
             List<Hyperlinks> visitedLinks = new ArrayList<>();
             List<Hyperlinks> notVisitedLinks = new ArrayList<>();
@@ -132,6 +135,7 @@ public class WebCrawler {
                 if (notVisitedLinks.get(i).getLink().equals(visitedLinks.get(0).getLink())) {
                     notVisitedLinks.remove(i);
                 }
+<<<<<<< HEAD
 =======
 >>>>>>> parent of ec20cf1... Revert "Revert "Revert "Alterações"""
             }
@@ -173,14 +177,46 @@ public class WebCrawler {
                 count++;
             }
         }
-
-        for (PageTitle p : pages) {
-            try {
-                pagesVisited.add(p);
-                addPageTitle(p);
-            } catch (InvalidVertexException ex) {
-                throw new PageTitleException("Website with name does not exist");
+=======
             }
+            if (notVisitedLinks.isEmpty()) {
+                System.out.println("**** SORRY BUT THE PAGE " + pages.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
+            } else {
+                for(int i = 0; i< linksVisitedTotal.size(); i++){
+                    for(int j = i; j < notVisitedLinks.size(); j++){
+                        if(linksVisitedTotal.contains(notVisitedLinks.get(j))){
+                            notVisitedLinks.remove(j);
+                        }
+                    }       
+                }
+                System.out.println(notVisitedLinks);
+                int count = 0;
+                int i = 1;
+                while (!notVisitedLinks.isEmpty()) {
+                    if (notVisitedLinks.isEmpty()) {
+                        notVisitedLinks = wc.openUrlAndShowTitleAndLinks(visitedLinks.get(i).getLink(), pages, notVisitedLinks, visitedLinks);
+                        i++;
+                    } else {
+                        wc.openUrlAndShowTitle(notVisitedLinks.get(0).getLink(), pages);
+                        Hyperlinks link = notVisitedLinks.get(0);
+                        notVisitedLinks.remove(0);
+                        visitedLinks.add(link);
+                        linksVisitedTotal.add(link);
+                        count++;
+                    }
+                }
+            }
+>>>>>>> parent of 16a1b7c... Alterações
+
+            for (PageTitle p : pages) {
+                try {
+                    pagesVisited.add(p);
+                    addPageTitle(p);
+                } catch (InvalidVertexException ex) {
+                    throw new PageTitleException("Website with name does not exist");
+                }
+            }
+<<<<<<< HEAD
         }
         addRelation(pages, visitedLinks);
 =======
@@ -212,6 +248,9 @@ public class WebCrawler {
         }
         addRelation(pages, visitedLinks);
 >>>>>>> parent of ec20cf1... Revert "Revert "Revert "Alterações"""
+=======
+            addRelation(pages, visitedLinks);
+>>>>>>> parent of 16a1b7c... Alterações
     }
 
     public void addRelation(List<PageTitle> pagesVisited, List<Hyperlinks> linksVisited) throws PageTitleException, HyperlinksException {
