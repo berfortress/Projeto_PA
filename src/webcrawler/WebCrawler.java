@@ -59,6 +59,10 @@ public class WebCrawler {
         return linksVisited;
     }
 
+    public List<Hyperlinks> getLinksNotVisited() {
+        return linksNotVisited;
+    }    
+    
     public int getMaxPagesToSearch() {
         return maxPagesToSearch;
     }
@@ -225,7 +229,7 @@ public class WebCrawler {
             }
 
         }
-        str += "\nNº Links Visitados " + getLinksVisited().size() + "\nLinks Visitados " + getLinksVisited() + "\nVertices" + digraph.vertices() + "\nEdges" + digraph.edges();
+        str += "\nNº Links Visitados " + getLinksVisited().size() + "\nLinks Visitados " + getLinksVisited() + "\nNº Links Não Visitados " + getLinksNotVisited().size() + "\nLinks Não Visitados " + getLinksNotVisited() + "\nVertices" + digraph.vertices() + "\nEdges" + digraph.edges();
         return str;
     }
 
