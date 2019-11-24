@@ -115,34 +115,38 @@ public class WebCrawler {
         List<PageTitle> pages = new ArrayList<>();
 
         linksVisited.add(new Hyperlinks("Initial URL ", url));
-        linksNotVisited = wc.openUrlAndShowTitleAndLinks(url, pages, linksNotVisited, linksVisited);
+        linksNotVisited = wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited, linksVisited);
 
         if (linksNotVisited.isEmpty()) {
             System.out.println("**** SORRY BUT THE PAGE " + pagesVisited.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
         } else {
             int i = 1;
-            while (!linksNotVisited.isEmpty()) {
+            while (pagesVisited.size() <= getMaxPagesToSearch()) {
                 if (linksNotVisited.isEmpty()) {
                     //wc.openUrlAndShowTitleAndLinks(linksVisited.get(i).getLink(), pagesVisited, linksNotVisited, linksVisited);
                     linksNotVisited = wc.openUrlAndShowTitleAndLinks(linksVisited.get(i).getLink(), pagesVisited, linksNotVisited, linksVisited);
                     i++;
                 } else {
-                    wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pages);
+                    wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited);
+                    pages.add(pagesVisited.get(i));
                     Hyperlinks link = linksNotVisited.get(0);
                     linksNotVisited.remove(0);
-                    linksVisited.add(link);
+                    linksVisited.add(link); 
+//                wc.openUrlAndShowTitle(notVisitedLinks.get(0).getLink(), pages);
+//                Hyperlinks link = notVisitedLinks.get(0);
+//                notVisitedLinks.remove(0);
+//                linksVisited.add(link);
                 }
             }
 
-            for (PageTitle p : pages) {
+            for (PageTitle p : pagesVisited) {
                 try {
-                    pagesVisited.add(p);
                     addPageTitle(p);
                 } catch (InvalidVertexException ex) {
                     throw new PageTitleException("PageTitle with name does not exist");
                 }
             }
-            addRelation(pages, linksVisited);
+            //addRelation(pages, visitedLinks);
         }
 
     }
@@ -150,7 +154,9 @@ public class WebCrawler {
     public void addRelation(List<PageTitle> pagesVisited, List<Hyperlinks> linksVisited) throws PageTitleException, HyperlinksException {
         try {
             for (int j = 1; j < pagesVisited.size(); j++) {
-                addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(j));
+                for (int k = 0; k < linksVisited.size(); k++) {
+                    addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(k));
+                }
             }
         } catch (InvalidEdgeException ex) {
             throw new HyperlinksException("Link with the name does not exist");
