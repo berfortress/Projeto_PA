@@ -24,7 +24,7 @@ import webcrawler.PageTitle;
 public class wcJsonDAO implements wcDAO{
     
     private String basePath;
-    private static final String fileName = "wc.json";
+    private static final String fileName = "webCrawler.json";
 
     public wcJsonDAO(String basePath) {
         this.basePath = basePath;
@@ -61,10 +61,10 @@ public class wcJsonDAO implements wcDAO{
         }
     }
 
-    public PageTitle loadWC(int id) {
+    public PageTitle loadWC(String pageTitleName) {
         HashSet<PageTitle> list = selectAll();
-        for (PageTitle p : list) {
-            if (p.getId() == id) {
+        for (PageTitle p : list) {   
+            if (p.getPageTitleName().equalsIgnoreCase(pageTitleName)) {
                 return p;
             }
         }

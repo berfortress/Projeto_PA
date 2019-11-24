@@ -75,6 +75,10 @@ public class WebCrawler {
     public Iterable<Vertex<PageTitle>> getAllPageTitle() {
         return digraph.vertices();
     }
+    
+    public Iterable<Edge<Hyperlinks, PageTitle>> getAllHyperlinks() {
+        return digraph.edges();
+    }
 
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
         SpiderLeg wc = new SpiderLeg();
@@ -214,7 +218,7 @@ public class WebCrawler {
                         List<Hyperlinks> l = new ArrayList<>();
                         l = getHyperlinksesBetween(a1.element(), a2.element());
                         for (int i = 0; i < l.size(); i++) {
-                            str += l.get(i).getLink() + "\n";
+                            str += "\t" + l.get(i).getLink() + "\n";
                         }
                     }
                 } catch (PageTitleException ex) {

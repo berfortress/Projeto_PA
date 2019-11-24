@@ -15,5 +15,5 @@ public interface wcDAO {
 
     public void saveWC(PageTitle wc);
 
-    public PageTitle loadWC(int id);
+    public PageTitle loadWC(String pageTitleName);
 }

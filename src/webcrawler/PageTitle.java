@@ -4,11 +4,14 @@
  * and open the template in the editor.
  */
 package webcrawler;
+
+import java.io.Serializable;
+
 /**
  *
  * @author bernardo
  */
-public class PageTitle {
+public class PageTitle implements Serializable{
     private int id = 0;
     private static int count = 0;
     private String pageTitleName;
@@ -50,7 +53,7 @@ public class PageTitle {
 
     @Override
     public String toString() {
-        return "" + id + ": " + getPageTitleName() + " " + "[" + getPageAddress() + "]";
+        return id + "[" + getPageTitleName() + "] "+ getPageAddress();
     }
     
     @Override
