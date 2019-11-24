@@ -81,7 +81,7 @@ public class WebCrawler {
         linksNotVisited = wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited, linksVisited);
         
         if(maxPagesToSearch > linksNotVisited.size()){
-            throw new HyperlinksException("Max Range Exeed");
+            throw new HyperlinksException("Max Range Exeed! You Can Only Search For "+linksNotVisited.size()+" Pages");
         }
             
         linksVisited.add(0, linksNotVisited.get(0));

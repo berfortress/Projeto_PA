@@ -21,9 +21,13 @@ public class Main {
     
 
     public static void main(String[] args) throws IOException, PageTitleException, HyperlinksException {
+        System.out.println("=====================================================");
+        System.out.println("\t\t     BEM VINDO!");
+        System.out.println("=====================================================");
         System.out.println("WEB CRAWLING \n");
         System.out.println(" 1- MODO AUTOMÁTICO");
         System.out.println(" 2- MODO ITERATIVO");
+        System.out.print("Insira o número do modo que pretende utilizar: ");
         Scanner myObj = new Scanner(System.in);
         try {
             int option = myObj.nextInt();
@@ -39,6 +43,8 @@ public class Main {
                 if(!wc.getLinksVisited().isEmpty() || maxNum >=1 ){
                   System.out.println(wc.toString());
                 }
+            } else if(option == 2){
+                System.out.println("\tPedimos desculpa mas estamos em manutenção :(");
             }
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
