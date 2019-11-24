@@ -30,7 +30,8 @@ import java.util.logging.Logger;
  */
 public class WebCrawler {
 
-    private List<Hyperlinks> linksVisitedTotal;
+    private List<Hyperlinks> linksVisited;
+    private List<Hyperlinks> linksNotVisited;
     private int maxPagesToSearch;
     private List<PageTitle> pagesVisited;
     private final Digraph<PageTitle, Hyperlinks> digraph;
@@ -38,14 +39,15 @@ public class WebCrawler {
     public WebCrawler(int maxPagesToSearch) {
         this.maxPagesToSearch = maxPagesToSearch;
         this.digraph = new GraphEdgeList<>();
-        this.linksVisitedTotal = new ArrayList<>();
+        this.linksVisited = new ArrayList<>();
+        this.linksNotVisited = new ArrayList<>();
         this.pagesVisited = new ArrayList<>();
     }
 
     public WebCrawler() {
         this.maxPagesToSearch = 4;
         this.digraph = new GraphEdgeList<>();
-        this.linksVisitedTotal = new ArrayList<>();
+        this.linksVisited = new ArrayList<>();
         this.pagesVisited = new ArrayList<>();
     }
 
@@ -54,7 +56,7 @@ public class WebCrawler {
     }
 
     public List<Hyperlinks> getLinksVisited() {
-        return linksVisitedTotal;
+        return linksVisited;
     }
 
     public int getMaxPagesToSearch() {
@@ -82,187 +84,44 @@ public class WebCrawler {
         return pa;
     }
 
-    private Iterable<PageTitle> BFS(Vertex<PageTitle> v) throws PageTitleException {
-        List<PageTitle> path = new ArrayList<>();
-        Set<Vertex<PageTitle>> visited = new HashSet<>();
-        Queue<Vertex<PageTitle>> queue = new LinkedList<>();
-
-        visited.add(v);
-        queue.add(v);
-
-        while (!queue.isEmpty()) {
-            Vertex<PageTitle> vLook = queue.remove();
-            path.add(vLook.element());
-            for (Vertex<PageTitle> vAdj : getAdjacents(vLook)) {
-                if (!visited.add(v)) {
-                    visited.add(vAdj);
-                    queue.add(vAdj);
-                }
-            }
-        }
-        return path;
-    }
-
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> parent of ec20cf1... Revert "Revert "Revert "Alterações"""
         SpiderLeg wc = new SpiderLeg();
-        //List<Hyperlinks> visitedLinks = new ArrayList<>();
-        List<Hyperlinks> notVisitedLinks = new ArrayList<>();
-        List<PageTitle> pages = new ArrayList<>();
-
-        notVisitedLinks = wc.openUrlAndShowTitleAndLinks(url, pages, notVisitedLinks, linksVisitedTotal);
-        linksVisitedTotal.add(new Hyperlinks("Initial URL ", url));
-        List<Hyperlinks> visitedLinks = new ArrayList<>(notVisitedLinks);
-        for (int i = 0; i < notVisitedLinks.size(); i++) {
-            if (notVisitedLinks.get(i).getLink().equals(linksVisitedTotal.get(0).getLink())) {
-                notVisitedLinks.remove(i);
-<<<<<<< HEAD
-=======
-=======
->>>>>>> parent of 16a1b7c... Alterações
-            SpiderLeg wc = new SpiderLeg();
-            List<Hyperlinks> visitedLinks = new ArrayList<>();
-            List<Hyperlinks> notVisitedLinks = new ArrayList<>();
-            List<PageTitle> pages = new ArrayList<>();
-
-            notVisitedLinks = wc.openUrlAndShowTitleAndLinks(url, pages, notVisitedLinks, visitedLinks);
-            visitedLinks.add(new Hyperlinks("Initial URL ", url));
-            for (int i = 0; i < notVisitedLinks.size(); i++) {
-                if (notVisitedLinks.get(i).getLink().equals(visitedLinks.get(0).getLink())) {
-                    notVisitedLinks.remove(i);
-                }
-<<<<<<< HEAD
-=======
->>>>>>> parent of ec20cf1... Revert "Revert "Revert "Alterações"""
+        linksNotVisited = wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited, linksVisited);
+        linksVisited.add(0,new Hyperlinks("Initial URL ", url));
+        for (int i = 0; i < linksNotVisited.size(); i++) {
+            if (linksNotVisited.get(i).getLink().equals(linksVisited.get(0).getLink())) {
+                linksNotVisited.remove(i);
             }
         }
 
-        if (linksVisitedTotal.size() > 0) {
-            for (int i = 0; i < linksVisitedTotal.size(); i++) {
-                for (int j = 1; j < notVisitedLinks.size(); j++) {
-                    if (linksVisitedTotal.contains(notVisitedLinks.get(j))) {
-                        notVisitedLinks.remove(j);
-                    }
-                }
->>>>>>> parent of d6d1f3d... kºlkçk
-            }
-        }
-<<<<<<< HEAD
-
-        if (linksVisitedTotal.size() > 0) {
-            for (int i = 0; i < linksVisitedTotal.size(); i++) {
-                for (int j = 1; j < notVisitedLinks.size(); j++) {
-                    if (linksVisitedTotal.contains(notVisitedLinks.get(j))) {
-                        notVisitedLinks.remove(j);
-                    }
-                }
-            }
-<<<<<<< HEAD
-        }
-        if (notVisitedLinks.isEmpty()) {
-            System.out.println("**** SORRY BUT THE PAGE " + pages.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
+        if (linksNotVisited.isEmpty()) {
+            System.out.println("**** SORRY BUT THE PAGE " + pagesVisited.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
         } else {
-            System.out.println(notVisitedLinks);
-            int count = 0;
             int i = 1;
-            while (!notVisitedLinks.isEmpty()) {
-                wc.openUrlAndShowTitle(notVisitedLinks.get(0).getLink(), pages);
-                Hyperlinks link = notVisitedLinks.get(0);
-                notVisitedLinks.remove(0);
-                linksVisitedTotal.add(link);
-                count++;
-            }
-        }
-=======
-            }
-            if (notVisitedLinks.isEmpty()) {
-                System.out.println("**** SORRY BUT THE PAGE " + pages.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
-            } else {
-                for(int i = 0; i< linksVisitedTotal.size(); i++){
-                    for(int j = i; j < notVisitedLinks.size(); j++){
-                        if(linksVisitedTotal.contains(notVisitedLinks.get(j))){
-                            notVisitedLinks.remove(j);
-                        }
-                    }       
-                }
-                System.out.println(notVisitedLinks);
-                int count = 0;
-                int i = 1;
-                while (!notVisitedLinks.isEmpty()) {
-                    if (notVisitedLinks.isEmpty()) {
-                        notVisitedLinks = wc.openUrlAndShowTitleAndLinks(visitedLinks.get(i).getLink(), pages, notVisitedLinks, visitedLinks);
-                        i++;
-                    } else {
-                        wc.openUrlAndShowTitle(notVisitedLinks.get(0).getLink(), pages);
-                        Hyperlinks link = notVisitedLinks.get(0);
-                        notVisitedLinks.remove(0);
-                        visitedLinks.add(link);
-                        linksVisitedTotal.add(link);
-                        count++;
-                    }
+            while (pagesVisited.size() <= getMaxPagesToSearch()) {
+                if (linksNotVisited.isEmpty()) {
+                    //wc.openUrlAndShowTitleAndLinks(linksVisited.get(1).getLink(), pagesVisited, linksNotVisited, linksVisited);
+                    linksNotVisited = wc.openUrlAndShowTitleAndLinks(linksVisited.get(i).getLink(), pagesVisited, linksNotVisited, linksVisited);
+                    i++;
+                } else {
+                    wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited);
+                    Hyperlinks link = linksNotVisited.get(0);
+                    linksNotVisited.remove(0);
+                    linksVisited.add(link);
                 }
             }
->>>>>>> parent of 16a1b7c... Alterações
-
-            for (PageTitle p : pages) {
-                try {
-                    pagesVisited.add(p);
-                    addPageTitle(p);
-                } catch (InvalidVertexException ex) {
-                    throw new PageTitleException("Website with name does not exist");
-                }
-            }
-<<<<<<< HEAD
         }
-        addRelation(pages, visitedLinks);
-=======
-            addRelation(pages, visitedLinks);
->>>>>>> parent of d6d1f3d... kºlkçk
-=======
-        if (notVisitedLinks.isEmpty()) {
-            System.out.println("**** SORRY BUT THE PAGE " + pages.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
-        } else {
-            System.out.println(notVisitedLinks);
-            int count = 0;
-            int i = 1;
-            while (!notVisitedLinks.isEmpty()) {
-                wc.openUrlAndShowTitle(notVisitedLinks.get(0).getLink(), pages);
-                Hyperlinks link = notVisitedLinks.get(0);
-                notVisitedLinks.remove(0);
-                linksVisitedTotal.add(link);
-                count++;
-            }
-        }
-
-        for (PageTitle p : pages) {
+        for (PageTitle p : pagesVisited) {
             try {
-                pagesVisited.add(p);
                 addPageTitle(p);
             } catch (InvalidVertexException ex) {
-                throw new PageTitleException("Website with name does not exist");
+                throw new PageTitleException("PageTitle with name does not exist");
             }
         }
-<<<<<<< HEAD
-        addRelation(pages, visitedLinks);
->>>>>>> parent of ec20cf1... Revert "Revert "Revert "Alterações"""
-=======
-            addRelation(pages, visitedLinks);
->>>>>>> parent of 16a1b7c... Alterações
-=======
-        
-        for(Hyperlinks l: linksNotVisited){
-            System.out.println(l.getId() + " " + l.getName() + " " + l.getLink());
-        }
-
         addRelation();
->>>>>>> parent of 416c778... Alterações GOD_FABI
     }
 
-    public void addRelation(List<PageTitle> pagesVisited, List<Hyperlinks> linksVisited) throws PageTitleException, HyperlinksException {
+    public void addRelation() throws PageTitleException, HyperlinksException {
         try {
             for (int j = 1; j < pagesVisited.size(); j++) {
                 addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(j));
@@ -270,32 +129,6 @@ public class WebCrawler {
         } catch (InvalidEdgeException ex) {
             throw new HyperlinksException("Link with the name does not exist");
         }
-    }
-
-    public void addBFS() throws PageTitleException, IOException, HyperlinksException {
-
-        Vertex<PageTitle> pa = null;
-
-        for (Vertex<PageTitle> p : digraph.vertices()) {
-            if (p.element().getId() == 1) {
-                pa = p;
-            }
-        }
-        List<PageTitle> list = new ArrayList<>();
-        int count = 1;
-        while (list.size() < getMaxPagesToSearch()) {
-            list.add(pagesVisited.get(count++));
-        }
-        System.out.println("----------------------------------------------------------------------");
-        System.out.println(list);
-        System.out.println("----------------------------------------------------------------------");
-
-        for (PageTitle p : list) {
-            search(p.getPageAddress());
-        }
-
-        //Iterable<PageTitle> it = BFS(pa);
-        //System.out.println("=========================="+it);
     }
 
     public void addPageTitle(PageTitle page) throws PageTitleException {
@@ -368,11 +201,11 @@ public class WebCrawler {
                 }
                 try {
                     if (!getHyperlinksesBetween(a1.element(), a2.element()).isEmpty()) {
-                        str += "\n \t" + "[" + a1.element().getPageTitleName() + "]" + " TO " + "[" + a2.element().getPageTitleName() + "]" + "\n";
+                        str += "\n [" + a1.element().getPageTitleName() + "]" + " TO " + "[" + a2.element().getPageTitleName() + "]" + "\n";
                         List<Hyperlinks> l = new ArrayList<>();
                         l = getHyperlinksesBetween(a1.element(), a2.element());
                         for (int i = 0; i < l.size(); i++) {
-                            str += "\t [" + l.get(i).getName() + "] " + l.get(i).getLink() + "\n";
+                            str += l.get(i).getLink() + "\n";
                         }
                     }
                 } catch (PageTitleException ex) {

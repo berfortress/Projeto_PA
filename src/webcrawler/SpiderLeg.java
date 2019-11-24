@@ -42,17 +42,18 @@ public class SpiderLeg {
                 }
             }
             List<Hyperlinks> newList = removeRepeatedLinks(link);
-            link = newList;       
+            link = newList;
 
         } catch (IOException ex) {
             System.out.println("HTTP request error" + ex);
         }
-        
+
         for (int i = 0; i < visitedLinks.size(); i++) {
-                if (visitedLinks.get(i).getLink().equals(link.get(i).getLink())) {
-                    link.remove(i);
-                }
+            if (visitedLinks.get(i).getLink().equals(link.get(i).getLink())) {
+                link.remove(i);
             }
+        }
+
         return link;
     }
 
@@ -82,15 +83,14 @@ public class SpiderLeg {
             }
         }
 
-        if (characters.equalsIgnoreCase("/")) {
-            indexOf = url.lastIndexOf(characters);
-            urlSize = url.length();
-            if (urlSize == indexOf + 1) {
-                url = url.substring(0, indexOf);
-                link.setLink(url);
-            }
-        }
-
+//        if (characters.equalsIgnoreCase("/")) {
+//            indexOf = url.lastIndexOf(characters);
+//            urlSize = url.length();
+//            if (urlSize == indexOf + 1) {
+//                url = url.substring(0, indexOf);
+//                link.setLink(url);
+//            }
+//        }
         if (characters.equalsIgnoreCase("&")) {
             indexOf = url.indexOf(characters);
             if (indexOf > -1) {
@@ -117,7 +117,7 @@ public class SpiderLeg {
         Set<Hyperlinks> newList = new HashSet<>(links);
         List<Hyperlinks> list = new ArrayList<>(newList);
         bubbleSort(list);
-        
+
         return list;
     }
 
