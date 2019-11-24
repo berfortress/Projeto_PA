@@ -148,7 +148,16 @@ public class WebCrawler {
             }
             //addRelation(pages, visitedLinks);
         }
+<<<<<<< HEAD
 
+=======
+        
+        for(Hyperlinks l: linksNotVisited){
+            System.out.println(l.getId() + " " + l.getName() + " " + l.getLink());
+        }
+
+        addRelation();
+>>>>>>> parent of 416c778... Alterações GOD_FABI
     }
 
     public void addRelation(List<PageTitle> pagesVisited, List<Hyperlinks> linksVisited) throws PageTitleException, HyperlinksException {
