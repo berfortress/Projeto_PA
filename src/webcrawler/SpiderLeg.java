@@ -48,8 +48,8 @@ public class SpiderLeg {
             System.out.println("HTTP request error" + ex);
         }
         
-        for (int i = 0; i < visitedLinks.size(); i++) {
-                if (visitedLinks.get(i).getLink().equals(link.get(i).getLink())) {
+        for (int i = 0; i < link.size(); i++) {
+                if (visitedLinks.contains(link.get(i))) {
                     link.remove(i);
                 }
             }

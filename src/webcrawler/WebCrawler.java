@@ -30,7 +30,8 @@ import java.util.logging.Logger;
  */
 public class WebCrawler {
 
-    private List<Hyperlinks> linksVisitedTotal;
+    private List<Hyperlinks> linksVisited;
+    private List<Hyperlinks> linksNotVisited;
     private int maxPagesToSearch;
     private List<PageTitle> pagesVisited;
     private final Digraph<PageTitle, Hyperlinks> digraph;
@@ -38,14 +39,16 @@ public class WebCrawler {
     public WebCrawler(int maxPagesToSearch) {
         this.maxPagesToSearch = maxPagesToSearch;
         this.digraph = new GraphEdgeList<>();
-        this.linksVisitedTotal = new ArrayList<>();
+        this.linksVisited = new ArrayList<>();
+        this.linksNotVisited = new ArrayList<>();
         this.pagesVisited = new ArrayList<>();
     }
 
     public WebCrawler() {
         this.maxPagesToSearch = 4;
         this.digraph = new GraphEdgeList<>();
-        this.linksVisitedTotal = new ArrayList<>();
+        this.linksVisited = new ArrayList<>();
+        this.linksNotVisited = new ArrayList<>();
         this.pagesVisited = new ArrayList<>();
     }
 
@@ -54,7 +57,11 @@ public class WebCrawler {
     }
 
     public List<Hyperlinks> getLinksVisited() {
-        return linksVisitedTotal;
+        return linksVisited;
+    }
+
+    public List<Hyperlinks> getLinksNotVisited() {
+        return linksNotVisited;
     }
 
     public int getMaxPagesToSearch() {
@@ -105,88 +112,55 @@ public class WebCrawler {
 
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
         SpiderLeg wc = new SpiderLeg();
-        //List<Hyperlinks> visitedLinks = new ArrayList<>();
-        List<Hyperlinks> notVisitedLinks = new ArrayList<>();
         List<PageTitle> pages = new ArrayList<>();
 
-        notVisitedLinks = wc.openUrlAndShowTitleAndLinks(url, pages, notVisitedLinks, linksVisitedTotal);
-        linksVisitedTotal.add(new Hyperlinks("Initial URL ", url));
-        List<Hyperlinks> visitedLinks = new ArrayList<>(notVisitedLinks);
-        for (int i = 0; i < notVisitedLinks.size(); i++) {
-            if (notVisitedLinks.get(i).getLink().equals(linksVisitedTotal.get(0).getLink())) {
-                notVisitedLinks.remove(i);
-            }
-        }
+        linksVisited.add(new Hyperlinks("Initial URL ", url));
+        linksNotVisited = wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited, linksVisited);
 
-        if (linksVisitedTotal.size() > 0) {
-            for (int i = 0; i < linksVisitedTotal.size(); i++) {
-                for (int j = 1; j < notVisitedLinks.size(); j++) {
-                    if (linksVisitedTotal.contains(notVisitedLinks.get(j))) {
-                        notVisitedLinks.remove(j);
-                    }
+        if (linksNotVisited.isEmpty()) {
+            System.out.println("**** SORRY BUT THE PAGE " + pagesVisited.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
+        } else {
+            int i = 1;
+            while (pagesVisited.size() <= getMaxPagesToSearch()) {
+                if (linksNotVisited.isEmpty()) {
+                    //wc.openUrlAndShowTitleAndLinks(linksVisited.get(i).getLink(), pagesVisited, linksNotVisited, linksVisited);
+                    linksNotVisited = wc.openUrlAndShowTitleAndLinks(linksVisited.get(i).getLink(), pagesVisited, linksNotVisited, linksVisited);
+                    i++;
+                } else {
+                    wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited);
+                    pages.add(pagesVisited.get(i));
+                    Hyperlinks link = linksNotVisited.get(0);
+                    linksNotVisited.remove(0);
+                    linksVisited.add(link); 
+//                wc.openUrlAndShowTitle(notVisitedLinks.get(0).getLink(), pages);
+//                Hyperlinks link = notVisitedLinks.get(0);
+//                notVisitedLinks.remove(0);
+//                linksVisited.add(link);
                 }
             }
-        }
-        if (notVisitedLinks.isEmpty()) {
-            System.out.println("**** SORRY BUT THE PAGE " + pages.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
-        } else {
-            System.out.println(notVisitedLinks);
-            int count = 0;
-            int i = 1;
-            while (!notVisitedLinks.isEmpty()) {
-                wc.openUrlAndShowTitle(notVisitedLinks.get(0).getLink(), pages);
-                Hyperlinks link = notVisitedLinks.get(0);
-                notVisitedLinks.remove(0);
-                linksVisitedTotal.add(link);
-                count++;
+
+            for (PageTitle p : pagesVisited) {
+                try {
+                    addPageTitle(p);
+                } catch (InvalidVertexException ex) {
+                    throw new PageTitleException("PageTitle with name does not exist");
+                }
             }
+            //addRelation(pages, visitedLinks);
         }
 
-        for (PageTitle p : pages) {
-            try {
-                pagesVisited.add(p);
-                addPageTitle(p);
-            } catch (InvalidVertexException ex) {
-                throw new PageTitleException("Website with name does not exist");
-            }
-        }
-        addRelation(pages, visitedLinks);
     }
 
     public void addRelation(List<PageTitle> pagesVisited, List<Hyperlinks> linksVisited) throws PageTitleException, HyperlinksException {
         try {
             for (int j = 1; j < pagesVisited.size(); j++) {
-                addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(j));
+                for (int k = 0; k < linksVisited.size(); k++) {
+                    addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(k));
+                }
             }
         } catch (InvalidEdgeException ex) {
             throw new HyperlinksException("Link with the name does not exist");
         }
-    }
-
-    public void addBFS() throws PageTitleException, IOException, HyperlinksException {
-
-        Vertex<PageTitle> pa = null;
-
-        for (Vertex<PageTitle> p : digraph.vertices()) {
-            if (p.element().getId() == 1) {
-                pa = p;
-            }
-        }
-        List<PageTitle> list = new ArrayList<>();
-        int count = 1;
-        while (list.size() < getMaxPagesToSearch()) {
-            list.add(pagesVisited.get(count++));
-        }
-        System.out.println("----------------------------------------------------------------------");
-        System.out.println(list);
-        System.out.println("----------------------------------------------------------------------");
-
-        for (PageTitle p : list) {
-            search(p.getPageAddress());
-        }
-
-        //Iterable<PageTitle> it = BFS(pa);
-        //System.out.println("=========================="+it);
     }
 
     public void addPageTitle(PageTitle page) throws PageTitleException {
