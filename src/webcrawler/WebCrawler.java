@@ -23,6 +23,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.Hyperlink;
 
 /**
  *
@@ -75,25 +76,18 @@ public class WebCrawler {
         return digraph.vertices();
     }
 
-    public Iterable<Vertex<PageTitle>> getAdjacents(Vertex<PageTitle> page) throws PageTitleException {
-
-        checkPageTitle(page.element());
-        List<Vertex<PageTitle>> pa = new ArrayList<>();
-
-        for (Edge<Hyperlinks, PageTitle> p : digraph.incidentEdges(page)) {
-            System.out.println("---------------------------");
-            pa.add(digraph.opposite(page, p));
-        }
-
-        return pa;
-    }
-
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
         SpiderLeg wc = new SpiderLeg();
         linksNotVisited = wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited, linksVisited);
-        linksVisited.add(0,new Hyperlinks("Initial URL ", url));
+        
+        if(maxPagesToSearch > linksNotVisited.size()){
+            throw new HyperlinksException("Max Range Exeed");
+        }
+            
+        linksVisited.add(0, linksNotVisited.get(0));
+        List<Hyperlinks> hl = new ArrayList<>(linksNotVisited);
         for (int i = 0; i < linksNotVisited.size(); i++) {
-            if (linksNotVisited.get(i).getLink().equals(linksVisited.get(0).getLink())) {
+            if (linksNotVisited.get(i).getLink().equals(hl.get(0).getLink())) {
                 linksNotVisited.remove(i);
             }
         }
@@ -110,6 +104,7 @@ public class WebCrawler {
                 } else {
                     wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited);
                     Hyperlinks link = linksNotVisited.get(0);
+                    System.out.println(link);
                     linksNotVisited.remove(0);
                     linksVisited.add(link);
                 }
@@ -126,6 +121,16 @@ public class WebCrawler {
     }
 
     public void addRelation() throws PageTitleException, HyperlinksException {
+        try {
+            for (int j = 1; j < pagesVisited.size(); j++) {
+                addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(j));
+            }
+        } catch (InvalidEdgeException ex) {
+            throw new HyperlinksException("Link with the name does not exist");
+        }
+    }
+    
+    public void addRelation2(List<PageTitle> pages, List<Hyperlinks> links) throws PageTitleException, HyperlinksException {
         try {
             for (int j = 1; j < pagesVisited.size(); j++) {
                 addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(j));

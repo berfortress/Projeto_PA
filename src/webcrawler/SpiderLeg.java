@@ -83,14 +83,14 @@ public class SpiderLeg {
             }
         }
 
-//        if (characters.equalsIgnoreCase("/")) {
-//            indexOf = url.lastIndexOf(characters);
-//            urlSize = url.length();
-//            if (urlSize == indexOf + 1) {
-//                url = url.substring(0, indexOf);
-//                link.setLink(url);
-//            }
-//        }
+        if (characters.equalsIgnoreCase("/")) {
+            indexOf = url.lastIndexOf(characters);
+            urlSize = url.length();
+            if (urlSize == indexOf + 1) {
+                url = url.substring(0, indexOf);
+                link.setLink(url);
+            }
+        }
         if (characters.equalsIgnoreCase("&")) {
             indexOf = url.indexOf(characters);
             if (indexOf > -1) {
