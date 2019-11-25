@@ -62,8 +62,8 @@ public class WebCrawler {
 
     public List<Hyperlinks> getLinksNotVisited() {
         return linksNotVisited;
-    }    
-    
+    }
+
     public int getMaxPagesToSearch() {
         return maxPagesToSearch;
     }
@@ -75,19 +75,50 @@ public class WebCrawler {
     public Iterable<Vertex<PageTitle>> getAllPageTitle() {
         return digraph.vertices();
     }
-    
+
     public Iterable<Edge<Hyperlinks, PageTitle>> getAllHyperlinks() {
         return digraph.edges();
     }
 
+    private Iterable<Vertex<PageTitle>> getAdjacents(Vertex<PageTitle> vLook) {
+        Set<Vertex<PageTitle>> setAdj = new HashSet<>();
+        for (Edge<Hyperlinks, PageTitle> edge : digraph.incidentEdges(vLook)) {
+            setAdj.add(digraph.opposite(vLook, edge));
+        }
+        return setAdj;
+    }
+
+    private Iterable<PageTitle> BFS(Vertex<PageTitle> v) {
+        Set<PageTitle> path = new HashSet<>();
+        Set<Vertex<PageTitle>> visited = new HashSet<>();
+        Queue<Vertex<PageTitle>> queue = new LinkedList<>();
+        visited.add(v);
+        queue.add(v);
+        while (!queue.isEmpty()) {
+            Vertex<PageTitle> vLook = queue.remove();
+            path.add(vLook.element());
+            for (Vertex<PageTitle> vAdj : getAdjacents(vLook)) {
+                if (!visited.contains(v)) {
+                    visited.add(vAdj);
+                    queue.add(vAdj);
+                }
+            }
+        }
+        return path;
+    }
+
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
         SpiderLeg wc = new SpiderLeg();
-        linksNotVisited = wc.openUrlAndShowTitleAndLinks(url, pagesVisited, linksNotVisited, linksVisited);
-        
-        if(maxPagesToSearch > linksNotVisited.size()){
-            throw new HyperlinksException("Max Range Exeed! You Can Only Search For "+linksNotVisited.size()+" Pages");
+        wc.openUrlAndShowTitleAndLinks(url);
+
+        linksNotVisited = wc.getLinksNotVisited();
+        linksVisited = wc.getLinksVisited();
+        pagesVisited = wc.getPagesVisited();
+
+        if (maxPagesToSearch > linksNotVisited.size()) {
+            throw new HyperlinksException("Max Range Exeed! You Can Only Search For " + linksNotVisited.size() + " Pages");
         }
-            
+
         linksVisited.add(0, linksNotVisited.get(0));
         List<Hyperlinks> hl = new ArrayList<>(linksNotVisited);
         for (int i = 0; i < linksNotVisited.size(); i++) {
@@ -103,17 +134,18 @@ public class WebCrawler {
             while (pagesVisited.size() <= getMaxPagesToSearch()) {
                 if (linksNotVisited.isEmpty()) {
                     //wc.openUrlAndShowTitleAndLinks(linksVisited.get(1).getLink(), pagesVisited, linksNotVisited, linksVisited);
-                    linksNotVisited = wc.openUrlAndShowTitleAndLinks(linksVisited.get(i).getLink(), pagesVisited, linksNotVisited, linksVisited);
+                    wc.openUrlAndShowTitleAndLinks(linksVisited.get(i).getLink());
                     i++;
                 } else {
-                    wc.openUrlAndShowTitle(linksNotVisited.get(0).getLink(), pagesVisited);
+                    wc.openUrlAndShowTitleAndLinks(linksNotVisited.get(0).getLink());
                     Hyperlinks link = linksNotVisited.get(0);
-                    System.out.println(link);
+                    pagesVisited.get(0).addHyperlink(link);
                     linksNotVisited.remove(0);
                     linksVisited.add(link);
                 }
             }
         }
+
         for (PageTitle p : pagesVisited) {
             try {
                 addPageTitle(p);
@@ -122,6 +154,34 @@ public class WebCrawler {
             }
         }
         addRelation();
+//        System.out.println(linksVisited);
+//        System.out.println(pagesVisited);
+//        System.out.println("\n" + digraph.vertices());
+//        int n = 0;
+//        
+//        for (int i = 1; i < pagesVisited.size(); i++) {
+//            int count = 0;
+//            PageTitle p = pagesVisited.get(i);
+//            List<Hyperlinks> list = wc.getAllLinks(p);
+//            System.out.println("\n" + list);
+//            for (Hyperlinks l : list) {
+//                System.out.println("\n" + wc.getPageTitle(l.getLink()));
+//                p.addHyperlink(l);
+//                count++;
+//                if (count == getMaxPagesToSearch()) {
+//                    break;
+//                } 
+//            }
+//            System.out.println();
+//            n++;
+//            if(n == getMaxPagesToSearch()){
+//                break;
+//            }
+//        }
+//        
+//        for(Vertex<PageTitle> l : digraph.vertices()){
+//            System.out.println(l.element().getHyper());
+//        }
     }
 
     public void addRelation() throws PageTitleException, HyperlinksException {
@@ -133,7 +193,7 @@ public class WebCrawler {
             throw new HyperlinksException("Link with the name does not exist");
         }
     }
-    
+
     public void addRelation2(List<PageTitle> pages, List<Hyperlinks> links) throws PageTitleException, HyperlinksException {
         try {
             for (int j = 1; j < pagesVisited.size(); j++) {
@@ -238,7 +298,24 @@ public class WebCrawler {
             }
 
         }
-        str += "\nNº Links Visitados " + getLinksVisited().size() + "\nLinks Visitados " + getLinksVisited() + "\nNº Links Não Visitados " + getLinksNotVisited().size() + "\nLinks Não Visitados " + getLinksNotVisited() + "\nVertices" + digraph.vertices() + "\nEdges" + digraph.edges();
+        str += "\n\nNº Links Visitados " + getLinksVisited().size() + "\n"
+                + "\nLinks Visitados " + getLinksVisited() + "\n"
+                + "\nNº Links Não Visitados " + getLinksNotVisited().size() + "\n"
+                + "\nLinks Não Visitados " + getLinksNotVisited() + "\n" 
+                + "\nVertices" + digraph.vertices() + "\n" 
+                + "\nEdges" + digraph.edges() + "\n"
+                + "\nA página mais visitada foi ";
+        int max = -1;
+        PageTitle pg = new PageTitle();
+        for(Vertex<PageTitle> p : digraph.vertices()){
+            if(max < digraph.incidentEdges(p).size()){
+                pg = p.element();
+                max = digraph.incidentEdges(p).size();
+            }
+        }
+        
+        str += pg.getPageTitleName() + "\n";
+            
         return str;
     }
 

@@ -6,6 +6,8 @@
 package webcrawler;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -16,18 +18,28 @@ public class PageTitle implements Serializable{
     private static int count = 0;
     private String pageTitleName;
     private String pageAddress;
-
+    private List<Hyperlinks> hyper;
 
     public PageTitle(String pageTitleName, String pageAddress) {
         this.id = ++count;
         this.pageTitleName = pageTitleName;
         this.pageAddress = pageAddress;
+        hyper = new ArrayList<>();
     }  
 
     public PageTitle() {
         this.id = ++count;
         this.pageTitleName = "";
         this.pageAddress = "";
+        hyper = new ArrayList<>();
+    }
+    
+    public void addHyperlink(Hyperlinks h){
+        hyper.add(h);
+    }
+
+    public List<Hyperlinks> getHyper() {
+        return hyper;
     }
 
     public String getPageTitleName() {

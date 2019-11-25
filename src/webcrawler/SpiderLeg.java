@@ -21,7 +21,48 @@ import org.jsoup.select.Elements;
  */
 public class SpiderLeg {
 
-    public List<Hyperlinks> openUrlAndShowTitleAndLinks(String urlAddress, List<PageTitle> pageTitle, List<Hyperlinks> link, List<Hyperlinks> visitedLinks) throws IOException {
+    private List<Hyperlinks> linksVisited;
+    private List<Hyperlinks> linksNotVisit;
+    private List<PageTitle> pagesVisited;
+
+    public SpiderLeg() {
+        linksVisited = new ArrayList<>();
+        linksNotVisit = new ArrayList<>();
+        pagesVisited = new ArrayList<>();
+    }
+
+    public void openUrlAndShowTitleAndLinks(String urlAddress) throws IOException {
+        try {
+            Document doc = Jsoup.connect(urlAddress).get();
+            String title = doc.title();
+            Elements links = doc.select("a[href]");
+            if (title.isEmpty()) {
+                pagesVisited.add(new PageTitle("404 - Not Found", urlAddress));
+            } else {
+                pagesVisited.add(new PageTitle(title, urlAddress));
+            }
+            for (Element l : links) {
+                if (l.text().isEmpty()) {
+                    linksNotVisit.add(new Hyperlinks("No Description", l.attr("abs:href")));
+                } else {
+                    linksNotVisit.add(new Hyperlinks(l.text(), l.attr("abs:href")));
+                }
+            }
+            List<Hyperlinks> newList = removeRepeatedLinks(linksNotVisit);
+            linksNotVisit = newList;
+
+        } catch (IOException ex) {
+            System.out.println("HTTP request error" + ex);
+        }
+
+        for (int i = 0; i < linksVisited.size(); i++) {
+            if (linksVisited.get(i).getLink().equals(linksNotVisit.get(i).getLink())) {
+                linksNotVisit.remove(i);
+            }
+        }
+    }
+
+    public PageTitle getPageTitle(String urlAddress) {
         PageTitle page = null;
         try {
             Document doc = Jsoup.connect(urlAddress).get();
@@ -29,50 +70,51 @@ public class SpiderLeg {
             Elements links = doc.select("a[href]");
             if (title.isEmpty()) {
                 page = new PageTitle("404 - Not Found", urlAddress);
-                pageTitle.add(page);
+                pagesVisited.add(page);
+                doc.title("404 - Not Found");
+                return page;
             } else {
                 page = new PageTitle(title, urlAddress);
-                pageTitle.add(page);
+                pagesVisited.add(page);
+                doc.title(title);
+                return page;
             }
+        } catch (IOException ex) {
+            System.out.println("HTTP request error" + ex);
+        }
+        return null;
+    }
+
+    public List<Hyperlinks> getAllLinks(PageTitle page) throws IOException {
+        List<Hyperlinks> hype = new ArrayList<>();
+        Document doc = Jsoup.connect(page.getPageAddress()).get();
+        Elements links = doc.select("a[href]");
+        Hyperlinks p = null;
+
             for (Element l : links) {
                 if (l.text().isEmpty()) {
-                    link.add(new Hyperlinks("No Description", l.attr("abs:href")));
+                    p = new Hyperlinks("No Description", l.attr("abs:href"));
                 } else {
-                    link.add(new Hyperlinks(l.text(), l.attr("abs:href")));
+                    p = new Hyperlinks(l.text(), l.attr("abs:href"));
+                }
+                if (l != null) {
+                    if (!linksVisited.contains(p)) {
+                        if (!linksNotVisit.contains(p)) {
+                            linksNotVisit.add(p);
+                            hype.add(p);
+                        }
+                    }
+                    removeRepeatedLinks(linksNotVisit);
+                    List<Hyperlinks> newList = removeRepeatedLinks(hype);
+                    hype = newList;
+                } else {
+                    break;
                 }
             }
-            List<Hyperlinks> newList = removeRepeatedLinks(link);
-            link = newList;
-
-        } catch (IOException ex) {
-            System.out.println("HTTP request error" + ex);
-        }
-
-        for (int i = 0; i < visitedLinks.size(); i++) {
-            if (visitedLinks.get(i).getLink().equals(link.get(i).getLink())) {
-                link.remove(i);
-            }
-        }
-
-        return link;
+        return hype;
     }
 
-    public void openUrlAndShowTitle(String urlAddress, List<PageTitle> pageTitle) throws IOException {
-        try {
-            Document doc = Jsoup.connect(urlAddress).get();
-            String title = doc.title();
-
-            if (title.isEmpty()) {
-                pageTitle.add(new PageTitle("404 - Not Found", urlAddress));
-            } else {
-                pageTitle.add(new PageTitle(title, urlAddress));
-            }
-        } catch (IOException ex) {
-            System.out.println("HTTP request error" + ex);
-        }
-    }
-
-    private void removeAfterCharacters(Hyperlinks link, String url, String characters) {
+    public void removeAfterCharacters(Hyperlinks link, String url, String characters) {
         int indexOf;
         int urlSize;
         if (characters.equalsIgnoreCase("#")) {
@@ -101,7 +143,7 @@ public class SpiderLeg {
 
     }
 
-    private List<Hyperlinks> removeRepeatedLinks(List<Hyperlinks> links) {
+    public List<Hyperlinks> removeRepeatedLinks(List<Hyperlinks> links) {
         for (int i = 0; i < links.size(); i++) {
             String s1 = links.get(i).getLink();
             removeAfterCharacters(links.get(i), s1, "#");
@@ -119,6 +161,18 @@ public class SpiderLeg {
         bubbleSort(list);
 
         return list;
+    }
+
+    public List<Hyperlinks> getLinksVisited() {
+        return linksVisited;
+    }
+
+    public List<Hyperlinks> getLinksNotVisited() {
+        return linksNotVisit;
+    }
+
+    public List<PageTitle> getPagesVisited() {
+        return pagesVisited;
     }
 
     public List<Hyperlinks> bubbleSort(List<Hyperlinks> list) {

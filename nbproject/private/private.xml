@@ -12,11 +12,10 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/fabio/OneDrive/Documentos/GitHub/Projeto_PA/test/adtgraph/GraphEdgeListTest.java</file>
-            <file>file:/C:/Users/fabio/OneDrive/Documentos/GitHub/Projeto_PA/test/webcrawler/WebCrawlerTest.java</file>
+            <file>file:/C:/Users/fabio/OneDrive/Documentos/GitHub/Projeto_PA/src/webcrawler/SpiderLeg.java</file>
+            <file>file:/C:/Users/fabio/OneDrive/Documentos/GitHub/Projeto_PA/src/webcrawler/PageTitle.java</file>
             <file>file:/C:/Users/fabio/OneDrive/Documentos/GitHub/Projeto_PA/src/webcrawler/Hyperlinks.java</file>
-            <file>file:/C:/Users/fabio/OneDrive/Documentos/GitHub/Projeto_PA/test/webcrawler/PageTitleTest.java</file>
-            <file>file:/C:/Users/fabio/OneDrive/Documentos/GitHub/Projeto_PA/test/webcrawler/HyperlinksTest.java</file>
+            <file>file:/C:/Users/fabio/OneDrive/Documentos/GitHub/Projeto_PA/src/main/Main.java</file>
             <file>file:/C:/Users/fabio/OneDrive/Documentos/GitHub/Projeto_PA/src/webcrawler/WebCrawler.java</file>
         </group>
     </open-files>
