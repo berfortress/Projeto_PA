@@ -5,6 +5,10 @@
  */
 package webcrawler;
 
+import models.Hyperlinks;
+import models.HyperlinksException;
+import models.PageTitleException;
+import models.PageTitle;
 import adtgraph.Digraph;
 import java.util.List;
 import adtgraph.Edge;
@@ -14,20 +18,14 @@ import adtgraph.InvalidVertexException;
 import adtgraph.Vertex;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import enums.Criteria;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.Hyperlink;
 
 /**
  *
- * @author bernardo
+ * @author Bernardo e Fábio
  */
 public class WebCrawler {
 
@@ -37,6 +35,11 @@ public class WebCrawler {
     private List<PageTitle> pagesVisited;
     private final Digraph<PageTitle, Hyperlinks> digraph;
 
+    /**
+     * Construtor da classe WebCrawler
+     *
+     * @param maxPagesToSearch
+     */
     public WebCrawler(int maxPagesToSearch) {
         this.maxPagesToSearch = maxPagesToSearch;
         this.digraph = new GraphEdgeList<>();
@@ -45,6 +48,9 @@ public class WebCrawler {
         this.pagesVisited = new ArrayList<>();
     }
 
+    /**
+     * Construtor da classe WebCrawler.
+     */
     public WebCrawler() {
         this.maxPagesToSearch = 4;
         this.digraph = new GraphEdgeList<>();
@@ -52,34 +58,74 @@ public class WebCrawler {
         this.pagesVisited = new ArrayList<>();
     }
 
+    /**
+     * Método que retorna uma lista de páginas visitadas.
+     *
+     * @return
+     */
     public List<PageTitle> getPagesVisited() {
         return pagesVisited;
     }
 
+    /**
+     * Método que retorna uma lista de links visitados.
+     *
+     * @return
+     */
     public List<Hyperlinks> getLinksVisited() {
         return linksVisited;
     }
 
+    /**
+     * Método que retorna uma lista de links não visitados.
+     *
+     * @return
+     */
     public List<Hyperlinks> getLinksNotVisited() {
         return linksNotVisited;
     }
 
+    /**
+     * Método que retorna o número máximo de páginas a procurar.
+     *
+     * @return
+     */
     public int getMaxPagesToSearch() {
         return maxPagesToSearch;
     }
 
+    /**
+     * Método que altera o número máximo de páginas a procurar.
+     *
+     * @param maxPagesToSearch
+     */
     public void setMaxPagesToSearch(int maxPagesToSearch) {
         this.maxPagesToSearch = maxPagesToSearch;
     }
 
+    /**
+     * Método que retorna todos os vértices (PageTitle).
+     *
+     * @return
+     */
     public Iterable<Vertex<PageTitle>> getAllPageTitle() {
         return digraph.vertices();
     }
 
+    /**
+     * Método que retorna todos as arestas (Hyperlinks).
+     *
+     * @return
+     */
     public Iterable<Edge<Hyperlinks, PageTitle>> getAllHyperlinks() {
         return digraph.edges();
     }
 
+    /**
+     * Método que retorna todos os vértices adjacentes a um vértice específico.
+     *
+     * @return
+     */
     private Iterable<Vertex<PageTitle>> getAdjacents(Vertex<PageTitle> vLook) {
         Set<Vertex<PageTitle>> setAdj = new HashSet<>();
         for (Edge<Hyperlinks, PageTitle> edge : digraph.incidentEdges(vLook)) {
@@ -88,25 +134,21 @@ public class WebCrawler {
         return setAdj;
     }
 
-    private Iterable<PageTitle> BFS(Vertex<PageTitle> v) {
-        Set<PageTitle> path = new HashSet<>();
-        Set<Vertex<PageTitle>> visited = new HashSet<>();
-        Queue<Vertex<PageTitle>> queue = new LinkedList<>();
-        visited.add(v);
-        queue.add(v);
-        while (!queue.isEmpty()) {
-            Vertex<PageTitle> vLook = queue.remove();
-            path.add(vLook.element());
-            for (Vertex<PageTitle> vAdj : getAdjacents(vLook)) {
-                if (!visited.contains(v)) {
-                    visited.add(vAdj);
-                    queue.add(vAdj);
-                }
-            }
-        }
-        return path;
-    }
-
+    /**
+     * Método principal : É dado um URL inicial e a partir dele são adicionados
+     * na lista de links não visitados os links que foram encontrados no URL
+     * passado por parâmetro, se a lista de links não visitados estiver vazia é
+     * enviado um print a informar que a página não contém links,senão ele
+     * percorre sempre em medida do número máximo de páginas que definimos. Cria
+     * um vértice com informação do link da posição zero dos links não visitados
+     * e depois disso é removido fazendo isto até ao critério de paragem ser
+     * cumprido.
+     *
+     * @param url
+     * @throws IOException
+     * @throws PageTitleException
+     * @throws HyperlinksException
+     */
     public void search(String url) throws IOException, PageTitleException, HyperlinksException {
         SpiderLeg wc = new SpiderLeg();
         wc.openUrlAndShowTitleAndLinks(url);
@@ -133,7 +175,6 @@ public class WebCrawler {
             int i = 1;
             while (pagesVisited.size() <= getMaxPagesToSearch()) {
                 if (linksNotVisited.isEmpty()) {
-                    //wc.openUrlAndShowTitleAndLinks(linksVisited.get(1).getLink(), pagesVisited, linksNotVisited, linksVisited);
                     wc.openUrlAndShowTitleAndLinks(linksVisited.get(i).getLink());
                     i++;
                 } else {
@@ -154,36 +195,14 @@ public class WebCrawler {
             }
         }
         addRelation();
-//        System.out.println(linksVisited);
-//        System.out.println(pagesVisited);
-//        System.out.println("\n" + digraph.vertices());
-//        int n = 0;
-//        
-//        for (int i = 1; i < pagesVisited.size(); i++) {
-//            int count = 0;
-//            PageTitle p = pagesVisited.get(i);
-//            List<Hyperlinks> list = wc.getAllLinks(p);
-//            System.out.println("\n" + list);
-//            for (Hyperlinks l : list) {
-//                System.out.println("\n" + wc.getPageTitle(l.getLink()));
-//                p.addHyperlink(l);
-//                count++;
-//                if (count == getMaxPagesToSearch()) {
-//                    break;
-//                } 
-//            }
-//            System.out.println();
-//            n++;
-//            if(n == getMaxPagesToSearch()){
-//                break;
-//            }
-//        }
-//        
-//        for(Vertex<PageTitle> l : digraph.vertices()){
-//            System.out.println(l.element().getHyper());
-//        }
     }
 
+    /**
+     * Método que adiciona as relações (arestas) aos vértices.
+     *
+     * @throws PageTitleException
+     * @throws HyperlinksException
+     */
     public void addRelation() throws PageTitleException, HyperlinksException {
         try {
             for (int j = 1; j < pagesVisited.size(); j++) {
@@ -194,16 +213,12 @@ public class WebCrawler {
         }
     }
 
-    public void addRelation2(List<PageTitle> pages, List<Hyperlinks> links) throws PageTitleException, HyperlinksException {
-        try {
-            for (int j = 1; j < pagesVisited.size(); j++) {
-                addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(j));
-            }
-        } catch (InvalidEdgeException ex) {
-            throw new HyperlinksException("Link with the name does not exist");
-        }
-    }
-
+    /**
+     * Método que adiciona vértices.
+     *
+     * @param page
+     * @throws PageTitleException
+     */
     public void addPageTitle(PageTitle page) throws PageTitleException {
         try {
             digraph.insertVertex(page);
@@ -212,10 +227,18 @@ public class WebCrawler {
         }
     }
 
+    /**
+     * Método que liga dois vértices a uma aresta.
+     *
+     * @param page1
+     * @param page2
+     * @param link
+     * @throws PageTitleException
+     */
     public void addHyperLinks(PageTitle page1, PageTitle page2, Hyperlinks link) throws PageTitleException {
 
         if (link == null) {
-            throw new PageTitleException("Hyper link is null");
+            throw new PageTitleException("Hyperlink is null");
         }
 
         Vertex<PageTitle> a1 = checkPageTitle(page1);
@@ -228,6 +251,13 @@ public class WebCrawler {
         }
     }
 
+    /**
+     * Verifica se o vértice já existe.
+     *
+     * @param page
+     * @return
+     * @throws PageTitleException
+     */
     private Vertex<PageTitle> checkPageTitle(PageTitle page) throws PageTitleException {
 
         if (page == null) {
@@ -248,6 +278,14 @@ public class WebCrawler {
         return find;
     }
 
+    /**
+     * Método que retorna uma lista de arestas entre dois vértices.
+     *
+     * @param page1
+     * @param page2
+     * @return
+     * @throws PageTitleException
+     */
     public List<Hyperlinks> getHyperlinksesBetween(PageTitle page1, PageTitle page2) throws PageTitleException {
         Vertex<PageTitle> p1 = checkPageTitle(page1);
         Vertex<PageTitle> p2 = checkPageTitle(page2);
@@ -264,6 +302,11 @@ public class WebCrawler {
         return list;
     }
 
+    /**
+     * Retorna uma String com a informação acerca do webCrawler.
+     *
+     * @return
+     */
     @Override
     public String toString() {
         String str = "WEB CRAWLER (" + digraph.numVertices() + " pagesTitles | " + digraph.numEdges() + " links) \n";
@@ -301,24 +344,30 @@ public class WebCrawler {
         str += "\n\nNº Links Visitados " + getLinksVisited().size() + "\n"
                 + "\nLinks Visitados " + getLinksVisited() + "\n"
                 + "\nNº Links Não Visitados " + getLinksNotVisited().size() + "\n"
-                + "\nLinks Não Visitados " + getLinksNotVisited() + "\n" 
-                + "\nVertices" + digraph.vertices() + "\n" 
+                + "\nLinks Não Visitados " + getLinksNotVisited() + "\n"
+                + "\nVertices" + digraph.vertices() + "\n"
                 + "\nEdges" + digraph.edges() + "\n"
                 + "\nA página mais visitada foi ";
         int max = -1;
         PageTitle pg = new PageTitle();
-        for(Vertex<PageTitle> p : digraph.vertices()){
-            if(max < digraph.incidentEdges(p).size()){
+        for (Vertex<PageTitle> p : digraph.vertices()) {
+            if (max < digraph.incidentEdges(p).size()) {
                 pg = p.element();
                 max = digraph.incidentEdges(p).size();
             }
         }
-        
+
         str += pg.getPageTitleName() + "\n";
-            
+
         return str;
     }
 
+    /**
+     * Método que retorna o vértice dado um pageTitle.
+     *
+     * @param pi
+     * @return
+     */
     private Vertex<PageTitle> getVertex(PageTitle pi) {
         for (Vertex<PageTitle> ap : digraph.vertices()) {
             if (ap.element().equals(pi)) {
@@ -326,85 +375,5 @@ public class WebCrawler {
             }
         }
         return null;
-    }
-
-    public int minimumCostPath(Criteria criteria, PageTitle orig, PageTitle dst, List<PageTitle> pontos, List<Hyperlinks> path) throws PageTitleException {
-        if (orig == null || dst == null) {
-            throw new PageTitleException("Invalid - Ponto de interesse");
-        }
-
-        HashMap<Vertex<PageTitle>, Double> costs = new HashMap();
-        HashMap<Vertex<PageTitle>, Vertex<PageTitle>> predecessors = new HashMap();
-        HashMap<Vertex<PageTitle>, Edge<Hyperlinks, PageTitle>> edgesP = new HashMap();
-
-        Vertex<PageTitle> iVertex = getVertex(orig);
-
-        if (iVertex != null) {
-            dijkstra(criteria, iVertex, costs, predecessors, edgesP);
-        }
-
-        double cost = costs.get(getVertex(dst));
-
-        Vertex<PageTitle> fVertex = getVertex(dst);
-        do {
-            pontos.add(0, fVertex.element());
-            path.add(0, edgesP.get(fVertex).element());
-            fVertex = predecessors.get(fVertex);
-
-        } while (fVertex != iVertex);
-
-        pontos.add(0, orig);
-
-        return (int) cost;
-    }
-
-    private void dijkstra(Criteria criteria, Vertex<PageTitle> orig,
-            Map<Vertex<PageTitle>, Double> costs,
-            Map<Vertex<PageTitle>, Vertex<PageTitle>> predecessors,
-            Map<Vertex<PageTitle>, Edge<Hyperlinks, PageTitle>> edgesP) {
-
-        List<Vertex<PageTitle>> unvisited = new ArrayList();
-
-        for (Vertex<PageTitle> page2 : digraph.vertices()) {
-            unvisited.add(page2);
-            costs.put(page2, Double.MAX_VALUE);
-            predecessors.put(page2, null);
-        }
-
-        costs.put(orig, 0.0);
-
-        while (!unvisited.isEmpty()) {
-            Vertex<PageTitle> lowCostVertex = findLowerCostVertex(unvisited, costs);
-            unvisited.remove(lowCostVertex);
-            for (Edge<Hyperlinks, PageTitle> conexao : digraph.incidentEdges(lowCostVertex)) {
-                Vertex<PageTitle> opposite = digraph.opposite(lowCostVertex, conexao);
-                if (unvisited.contains(opposite)) {
-
-                    double rotaCusto = 0;
-                    switch (criteria) {
-                        case DISTANCE:
-                            rotaCusto = conexao.element().getDistance() + costs.get(lowCostVertex);
-                            break;
-                    }
-                    if (costs.get(opposite) > rotaCusto) {
-                        costs.put(opposite, rotaCusto);
-                        predecessors.put(opposite, lowCostVertex);
-                        edgesP.put(opposite, conexao);
-                    }
-                }
-            }
-        }
-    }
-
-    private Vertex<PageTitle> findLowerCostVertex(List<Vertex<PageTitle>> unvisited, Map<Vertex<PageTitle>, Double> costs) {
-        double min = Double.MAX_VALUE;
-        Vertex<PageTitle> minCostVertex = null;
-        for (Vertex<PageTitle> vertex : unvisited) {
-            if (costs.get(vertex) <= min) {
-                minCostVertex = vertex;
-                min = costs.get(vertex);
-            }
-        }
-        return minCostVertex;
     }
 }

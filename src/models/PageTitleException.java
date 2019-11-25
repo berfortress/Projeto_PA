@@ -3,14 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package webcrawler;
+package models;
 
 /**
  *
- * @author bernardo
+ * @author fabio
  */
-public class HyperlinksException extends Exception{
-    public HyperlinksException(String string) {
+public class PageTitleException extends Exception {
+    /**
+     * Exceção das PageTitle
+     * @param string 
+     */
+    public PageTitleException(String string) {
         super(string);
-    }  
+    }
 }

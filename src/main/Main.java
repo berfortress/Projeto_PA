@@ -10,10 +10,10 @@ import webcrawler.WebCrawler;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import webcrawler.HyperlinksException;
-import webcrawler.PageTitleException;
+import models.HyperlinksException;
+import models.PageTitleException;
 import java.util.Scanner;
-import webcrawler.PageTitle;
+import models.PageTitle;
 
 /**
  *
@@ -24,10 +24,10 @@ public class Main {
     
 
     public static void main(String[] args) throws IOException, PageTitleException, HyperlinksException {
-        wcDAO jsonDAO = new wcJsonDAO("C:\\Users\\fabio\\OneDrive\\Documentos\\GitHub\\Projeto_PA");
+        wcDAO jsonDAO = new wcJsonDAO("C:\\Users\\berna\\Documents\\GitHub\\Projeto_PA");
         
         System.out.println("=====================================================");
-        System.out.println("\t\t     BEM VINDO!");
+        System.out.println("\t\t     WELCOME!");
         System.out.println("=====================================================");
         System.out.println("WEB CRAWLING \n");
         System.out.println(" 1- MODO AUTOMÁTICO");
@@ -69,7 +69,9 @@ public class Main {
                 }
                 
             } else if(option == 2){
-                System.out.println("\tPedimos desculpa mas estamos em manutenção :(");
+                System.out.println("Não Implementado");
+            }else if(option != 1 || option != 2){
+                System.out.println("Escolha apenas 1 ou 2");
             }
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

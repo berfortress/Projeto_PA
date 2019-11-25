@@ -5,7 +5,7 @@
  */
 package DAO;
 
-import webcrawler.PageTitle;
+import models.PageTitle;
 
 /**
  *

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import webcrawler.PageTitle;
+import models.PageTitle;
 
 /**
  * ADT Graph implementation that stores a collection of edges (and vertices) and

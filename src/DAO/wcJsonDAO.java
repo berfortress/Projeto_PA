@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import webcrawler.PageTitle;
+import models.PageTitle;
 
 /**
  *

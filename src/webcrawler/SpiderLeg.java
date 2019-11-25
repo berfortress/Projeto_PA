@@ -5,6 +5,8 @@
  */
 package webcrawler;
 
+import models.Hyperlinks;
+import models.PageTitle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,7 +19,7 @@ import org.jsoup.select.Elements;
 
 /**
  *
- * @author bernardo
+ * @author Bernardo e Fábio
  */
 public class SpiderLeg {
 
@@ -25,12 +27,20 @@ public class SpiderLeg {
     private List<Hyperlinks> linksNotVisit;
     private List<PageTitle> pagesVisited;
 
+    /**
+     * Construtor da Classe SpiderLeg
+     */
     public SpiderLeg() {
         linksVisited = new ArrayList<>();
         linksNotVisit = new ArrayList<>();
         pagesVisited = new ArrayList<>();
     }
 
+    /**
+     * Método usado na search.
+     * @param urlAddress
+     * @throws IOException 
+     */
     public void openUrlAndShowTitleAndLinks(String urlAddress) throws IOException {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
@@ -62,6 +72,11 @@ public class SpiderLeg {
         }
     }
 
+    /**
+     * Retorna uma PageTitle dando uma URL.
+     * @param urlAddress
+     * @return 
+     */
     public PageTitle getPageTitle(String urlAddress) {
         PageTitle page = null;
         try {
@@ -85,6 +100,12 @@ public class SpiderLeg {
         return null;
     }
 
+    /**
+     * Retorna uma lista de links associadas a um pageTitle
+     * @param page
+     * @return
+     * @throws IOException 
+     */
     public List<Hyperlinks> getAllLinks(PageTitle page) throws IOException {
         List<Hyperlinks> hype = new ArrayList<>();
         Document doc = Jsoup.connect(page.getPageAddress()).get();
@@ -114,6 +135,13 @@ public class SpiderLeg {
         return hype;
     }
 
+
+    /**
+     * Remove os caracteres de uma url específica.
+     * @param link
+     * @param url
+     * @param characters 
+     */
     public void removeAfterCharacters(Hyperlinks link, String url, String characters) {
         int indexOf;
         int urlSize;
@@ -143,6 +171,11 @@ public class SpiderLeg {
 
     }
 
+    /**
+     * Remove links repetidos de uma lista de links.
+     * @param links
+     * @return 
+     */
     public List<Hyperlinks> removeRepeatedLinks(List<Hyperlinks> links) {
         for (int i = 0; i < links.size(); i++) {
             String s1 = links.get(i).getLink();
@@ -163,18 +196,35 @@ public class SpiderLeg {
         return list;
     }
 
+    /**
+     * Retorna uma lista de Links Visitados.
+     * @return 
+     */
     public List<Hyperlinks> getLinksVisited() {
         return linksVisited;
     }
 
+    /**
+     * Retorna uma lista de Links Não Visitados.
+     * @return 
+     */
     public List<Hyperlinks> getLinksNotVisited() {
         return linksNotVisit;
     }
 
+    /**
+     * Retorna uma lista de Páginas Visitadas.
+     * @return 
+     */
     public List<PageTitle> getPagesVisited() {
         return pagesVisited;
     }
 
+    /**
+     * Ordena lista de links por ordem.
+     * @param list
+     * @return 
+     */
     public List<Hyperlinks> bubbleSort(List<Hyperlinks> list) {
         for (int i = 0; i < list.size() - 1; i++) {
             for (int j = 0; j < list.size() - i - 1; j++) {

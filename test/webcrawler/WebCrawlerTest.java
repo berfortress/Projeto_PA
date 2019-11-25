@@ -5,6 +5,10 @@
  */
 package webcrawler;
 
+import models.Hyperlinks;
+import models.HyperlinksException;
+import models.PageTitleException;
+import models.PageTitle;
 import adtgraph.Vertex;
 import enums.Criteria;
 import java.io.IOException;
