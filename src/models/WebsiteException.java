@@ -9,12 +9,12 @@ package models;
  *
  * @author fabio
  */
-public class PageTitleException extends Exception {
+public class WebsiteException extends Exception {
     /**
      * Exceção das PageTitle
      * @param string 
      */
-    public PageTitleException(String string) {
+    public WebsiteException(String string) {
         super(string);
     }
 }

@@ -6,14 +6,14 @@
 package main;
 import DAO.wcDAO;
 import DAO.wcJsonDAO;
-import webcrawler.WebCrawler;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import models.HyperlinksException;
-import models.PageTitleException;
+import models.LinkException;
+import models.WebsiteException;
 import java.util.Scanner;
-import models.PageTitle;
+import models.Website;
+import webcrawler.WebCrawler;
 
 /**
  *
@@ -23,11 +23,11 @@ import models.PageTitle;
 public class Main {
     
 
-    public static void main(String[] args) throws IOException, PageTitleException, HyperlinksException {
+    public static void main(String[] args) throws IOException, WebsiteException, LinkException {
         wcDAO jsonDAO = new wcJsonDAO("C:\\Users\\berna\\Documents\\GitHub\\Projeto_PA");
         
         System.out.println("=====================================================");
-        System.out.println("\t\t     WELCOME!");
+        System.out.println("\t\t     WELCOME");
         System.out.println("=====================================================");
         System.out.println("WEB CRAWLING \n");
         System.out.println(" 1- MODO AUTOMÁTICO");
@@ -49,7 +49,7 @@ public class Main {
                         System.out.println(wc.toString());
                     }
                     
-                    for (PageTitle p : wc.getPagesVisited()) {
+                    for (Website p : wc.webSitesVisited()) {
                         jsonDAO.saveWC(p);
                     }
                 } else if (choose.equalsIgnoreCase("n") || choose.equalsIgnoreCase("no")) {
@@ -63,7 +63,7 @@ public class Main {
                         System.out.println(wc.toString());
                     }
                     
-                    for (PageTitle p : wc.getPagesVisited()) {
+                    for (Website p : wc.webSitesVisited()) {
                         jsonDAO.saveWC(p);
                     }
                 }

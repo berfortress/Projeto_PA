@@ -11,62 +11,44 @@ import java.util.Objects;
  *
  * @author Bernardo e Fábio
  */
-public class Hyperlinks {
+public class Link {
     private int id = 0;
     private static int count = 0; 
     private final double distance;
-    private String name;
+    private String description;
     private String link;
-    private PageTitle page;
     
     /**
      * Construtor da classe Hyperlinks
-     * @param name
+     * @param description
      * @param link 
      */
 
-    public Hyperlinks(String name,String link) {
+    public Link(String description,String link) {
         this.id = ++count;
-        this.name = name;
+        this.description = description;
         this.link = link;
         this.distance = 1;
-        this.page = null;
     }
 
     
     /**
      * Construtor da classe Hyperlinks
      */
-    public Hyperlinks() {
+    public Link() {
         this.id = ++count;
-        this.name = "";
+        this.description = "";
         this.link = "";
         this.distance = 1;
-        this.page = null;
     }
 
-    /**
-     * Retorna a página.
-     * @return 
-     */
-    public PageTitle getPage() {
-        return page;
-    }
-
-    /**
-     * Altera a página.
-     * @param page 
-     */
-    public void setPage(PageTitle page) {
-        this.page = page;
-    }
 
     /**
      * Retorna a descrição do link
      * @return 
      */
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -89,8 +71,8 @@ public class Hyperlinks {
      * Altera a descrição do link
      * @param name 
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
@@ -115,7 +97,8 @@ public class Hyperlinks {
      */
     @Override
     public String toString() {
-        return "ID "  + getId();
+        //return "ID "  + getId();
+        return "ID" + getId();
     }
 
     /**
@@ -128,10 +111,10 @@ public class Hyperlinks {
        if (obj == this) {
             return true;
         }
-        if (!(obj instanceof Hyperlinks)) {
+        if (!(obj instanceof Link)) {
             return false;
         }
-        Hyperlinks other = (Hyperlinks) obj;
+        Link other = (Link) obj;
         return this.link.equals(other.link);
     }
     

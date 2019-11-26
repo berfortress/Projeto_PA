@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import models.PageTitle;
+import models.Website;
 
 /**
  *
@@ -30,13 +30,13 @@ public class wcJsonDAO implements wcDAO{
         this.basePath = basePath;
     }
 
-    private HashSet<PageTitle> selectAll() {
+    private HashSet<Website> selectAll() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(basePath + fileName));
             Gson gson = new GsonBuilder().create();
 
-            HashSet<PageTitle> list = gson.fromJson(br,
-                    new TypeToken<HashSet<PageTitle>>() {
+            HashSet<Website> list = gson.fromJson(br,
+                    new TypeToken<HashSet<Website>>() {
                     }.getType());
             return list;
 
@@ -46,11 +46,11 @@ public class wcJsonDAO implements wcDAO{
       
     }
 
-    public void saveWC(PageTitle wc) {
+    public void saveWC(Website wc) {
         FileWriter writer = null;
         try {
             Gson gson = new GsonBuilder().create();
-            HashSet<PageTitle> list = selectAll();
+            HashSet<Website> list = selectAll();
             list.add(wc);
             writer = new FileWriter(basePath + fileName);
             gson.toJson(list, writer);
@@ -61,10 +61,10 @@ public class wcJsonDAO implements wcDAO{
         }
     }
 
-    public PageTitle loadWC(String pageTitleName) {
-        HashSet<PageTitle> list = selectAll();
-        for (PageTitle p : list) {   
-            if (p.getPageTitleName().equalsIgnoreCase(pageTitleName)) {
+    public Website loadWC(String pageTitleName) {
+        HashSet<Website> list = selectAll();
+        for (Website p : list) {   
+            if (p.getWebsiteName().equalsIgnoreCase(pageTitleName)) {
                 return p;
             }
         }

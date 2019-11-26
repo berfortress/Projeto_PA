@@ -5,11 +5,8 @@
  */
 package webcrawler;
 
-import models.PageTitle;
-import org.junit.After;
-import org.junit.AfterClass;
+import models.Website;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -18,49 +15,49 @@ import static org.junit.Assert.*;
  * @author fabio
  */
 public class PageTitleTest {
-    private PageTitle page;
+    private Website page;
     
     @Before
     public void setUp() {
-        page = new PageTitle("MoodleIPS: Todas as disciplinas", "https://moodle.ips.pt/1920/course/index.php?categoryid=7");
+        page = new Website("MoodleIPS: Todas as disciplinas", "https://moodle.ips.pt/1920/course/index.php?categoryid=7");
     }
 
     /**
-     * Test of getPageTitleName method, of class PageTitle.
+     * Test of getWebsiteName method, of class Website.
      */
     @Test
     public void testGetPageTitleName() {
-        assertEquals("A implementação não está a atribuir o titulo da página correto", true, page.getPageTitleName().equals("MoodleIPS: Todas as disciplinas"));
+        assertEquals("A implementação não está a atribuir o titulo da página correto", true, page.getWebsiteName().equals("MoodleIPS: Todas as disciplinas"));
     }
 
     /**
-     * Test of getPageAddress method, of class PageTitle.
+     * Test of getURL method, of class Website.
      */
     @Test
     public void testGetPageAddress() {
-        assertEquals("A implementação não está a atribuir o adereço da página correto", true, page.getPageAddress().equals("https://moodle.ips.pt/1920/course/index.php?categoryid=7"));
+        assertEquals("A implementação não está a atribuir o adereço da página correto", true, page.getURL().equals("https://moodle.ips.pt/1920/course/index.php?categoryid=7"));
     }
 
     /**
-     * Test of setPageAddress method, of class PageTitle.
+     * Test of setURL method, of class Website.
      */
     @Test
     public void testSetPageAddress() {
-        page.setPageAddress("hello");
-        assertEquals("A implementação não está a atribuir o adereço da página correto", true, page.getPageAddress().equals("hello"));
+        page.setURL("hello");
+        assertEquals("A implementação não está a atribuir o adereço da página correto", true, page.getURL().equals("hello"));
     }
 
     /**
-     * Test of setPageTitleName method, of class PageTitle.
+     * Test of setWebsiteName method, of class Website.
      */
     @Test
     public void testSetPageTitleName() {
-        page.setPageTitleName("hello");
-        assertEquals("A implementação não está a atribuir o titulo da página correto", true, page.getPageTitleName().equals("hello"));
+        page.setWebsiteName("hello");
+        assertEquals("A implementação não está a atribuir o titulo da página correto", true, page.getWebsiteName().equals("hello"));
     }
 
     /**
-     * Test of getId method, of class PageTitle.
+     * Test of getId method, of class Website.
      */
     @Test
     public void testGetId() {

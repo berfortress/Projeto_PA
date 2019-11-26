@@ -5,12 +5,7 @@
  */
 package webcrawler;
 
-import models.Hyperlinks;
-import models.HyperlinksException;
-import models.PageTitleException;
-import models.PageTitle;
 import adtgraph.Digraph;
-import java.util.List;
 import adtgraph.Edge;
 import adtgraph.GraphEdgeList;
 import adtgraph.InvalidEdgeException;
@@ -19,21 +14,30 @@ import adtgraph.Vertex;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import models.Link;
+import models.LinkException;
+import models.Website;
+import models.WebsiteException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  *
- * @author Bernardo e Fábio
+ * @author berna
  */
 public class WebCrawler {
 
-    private List<Hyperlinks> linksVisited;
-    private List<Hyperlinks> linksNotVisited;
+    private List<Link> linksVisited;
+    private List<Link> linksList;
     private int maxPagesToSearch;
-    private List<PageTitle> pagesVisited;
-    private final Digraph<PageTitle, Hyperlinks> digraph;
+    private List<Website> webSitesVisited;
+    private final Digraph<Website, Link> digraph;
 
     /**
      * Construtor da classe WebCrawler
@@ -44,8 +48,8 @@ public class WebCrawler {
         this.maxPagesToSearch = maxPagesToSearch;
         this.digraph = new GraphEdgeList<>();
         this.linksVisited = new ArrayList<>();
-        this.linksNotVisited = new ArrayList<>();
-        this.pagesVisited = new ArrayList<>();
+        this.linksList = new ArrayList<>();
+        this.webSitesVisited = new ArrayList<>();
     }
 
     /**
@@ -55,7 +59,8 @@ public class WebCrawler {
         this.maxPagesToSearch = 4;
         this.digraph = new GraphEdgeList<>();
         this.linksVisited = new ArrayList<>();
-        this.pagesVisited = new ArrayList<>();
+        this.webSitesVisited = new ArrayList<>();
+        this.linksList = new ArrayList<>();
     }
 
     /**
@@ -63,8 +68,8 @@ public class WebCrawler {
      *
      * @return
      */
-    public List<PageTitle> getPagesVisited() {
-        return pagesVisited;
+    public List<Website> webSitesVisited() {
+        return webSitesVisited;
     }
 
     /**
@@ -72,17 +77,12 @@ public class WebCrawler {
      *
      * @return
      */
-    public List<Hyperlinks> getLinksVisited() {
+    public List<Link> getLinksVisited() {
         return linksVisited;
     }
 
-    /**
-     * Método que retorna uma lista de links não visitados.
-     *
-     * @return
-     */
-    public List<Hyperlinks> getLinksNotVisited() {
-        return linksNotVisited;
+    public List<Link> getLinks() {
+        return linksList;
     }
 
     /**
@@ -104,126 +104,34 @@ public class WebCrawler {
     }
 
     /**
-     * Método que retorna todos os vértices (PageTitle).
+     * Método que retorna todos os vértices (Website).
      *
      * @return
      */
-    public Iterable<Vertex<PageTitle>> getAllPageTitle() {
+    public Iterable<Vertex<Website>> getAllWebsites() {
         return digraph.vertices();
     }
 
     /**
-     * Método que retorna todos as arestas (Hyperlinks).
+     * Método que retorna todos as arestas (Link).
      *
      * @return
      */
-    public Iterable<Edge<Hyperlinks, PageTitle>> getAllHyperlinks() {
+    public Iterable<Edge<Link, Website>> getAllLinks() {
         return digraph.edges();
-    }
-
-    /**
-     * Método que retorna todos os vértices adjacentes a um vértice específico.
-     *
-     * @return
-     */
-    private Iterable<Vertex<PageTitle>> getAdjacents(Vertex<PageTitle> vLook) {
-        Set<Vertex<PageTitle>> setAdj = new HashSet<>();
-        for (Edge<Hyperlinks, PageTitle> edge : digraph.incidentEdges(vLook)) {
-            setAdj.add(digraph.opposite(vLook, edge));
-        }
-        return setAdj;
-    }
-
-    /**
-     * Método principal : É dado um URL inicial e a partir dele são adicionados
-     * na lista de links não visitados os links que foram encontrados no URL
-     * passado por parâmetro, se a lista de links não visitados estiver vazia é
-     * enviado um print a informar que a página não contém links,senão ele
-     * percorre sempre em medida do número máximo de páginas que definimos. Cria
-     * um vértice com informação do link da posição zero dos links não visitados
-     * e depois disso é removido fazendo isto até ao critério de paragem ser
-     * cumprido.
-     *
-     * @param url
-     * @throws IOException
-     * @throws PageTitleException
-     * @throws HyperlinksException
-     */
-    public void search(String url) throws IOException, PageTitleException, HyperlinksException {
-        SpiderLeg wc = new SpiderLeg();
-        wc.openUrlAndShowTitleAndLinks(url);
-
-        linksNotVisited = wc.getLinksNotVisited();
-        linksVisited = wc.getLinksVisited();
-        pagesVisited = wc.getPagesVisited();
-
-        if (maxPagesToSearch > linksNotVisited.size()) {
-            throw new HyperlinksException("Max Range Exeed! You Can Only Search For " + linksNotVisited.size() + " Pages");
-        }
-
-        linksVisited.add(0, linksNotVisited.get(0));
-        List<Hyperlinks> hl = new ArrayList<>(linksNotVisited);
-        for (int i = 0; i < linksNotVisited.size(); i++) {
-            if (linksNotVisited.get(i).getLink().equals(hl.get(0).getLink())) {
-                linksNotVisited.remove(i);
-            }
-        }
-
-        if (linksNotVisited.isEmpty()) {
-            System.out.println("**** SORRY BUT THE PAGE " + pagesVisited.get(0).getPageTitleName() + " DONT HAVE ANY URL. **** \n \n");
-        } else {
-            int i = 1;
-            while (pagesVisited.size() <= getMaxPagesToSearch()) {
-                if (linksNotVisited.isEmpty()) {
-                    wc.openUrlAndShowTitleAndLinks(linksVisited.get(i).getLink());
-                    i++;
-                } else {
-                    wc.openUrlAndShowTitleAndLinks(linksNotVisited.get(0).getLink());
-                    Hyperlinks link = linksNotVisited.get(0);
-                    pagesVisited.get(0).addHyperlink(link);
-                    linksNotVisited.remove(0);
-                    linksVisited.add(link);
-                }
-            }
-        }
-
-        for (PageTitle p : pagesVisited) {
-            try {
-                addPageTitle(p);
-            } catch (InvalidVertexException ex) {
-                throw new PageTitleException("PageTitle with name does not exist");
-            }
-        }
-        addRelation();
-    }
-
-    /**
-     * Método que adiciona as relações (arestas) aos vértices.
-     *
-     * @throws PageTitleException
-     * @throws HyperlinksException
-     */
-    public void addRelation() throws PageTitleException, HyperlinksException {
-        try {
-            for (int j = 1; j < pagesVisited.size(); j++) {
-                addHyperLinks(pagesVisited.get(0), pagesVisited.get(j), linksVisited.get(j));
-            }
-        } catch (InvalidEdgeException ex) {
-            throw new HyperlinksException("Link with the name does not exist");
-        }
     }
 
     /**
      * Método que adiciona vértices.
      *
      * @param page
-     * @throws PageTitleException
+     * @throws WebsiteException
      */
-    public void addPageTitle(PageTitle page) throws PageTitleException {
+    public void addVertex(Website page) throws WebsiteException {
         try {
             digraph.insertVertex(page);
         } catch (InvalidVertexException e) {
-            throw new PageTitleException("Website with name " + page.getPageTitleName() + " does not exist");
+            throw new WebsiteException("Website with name " + page.getWebsiteName() + " does not exist");
         }
     }
 
@@ -233,21 +141,21 @@ public class WebCrawler {
      * @param page1
      * @param page2
      * @param link
-     * @throws PageTitleException
+     * @throws WebsiteException
      */
-    public void addHyperLinks(PageTitle page1, PageTitle page2, Hyperlinks link) throws PageTitleException {
+    public void addEdge(Website page1, Website page2, Link link) throws WebsiteException {
 
         if (link == null) {
-            throw new PageTitleException("Hyperlink is null");
+            throw new WebsiteException("Hyperlink is null");
         }
 
-        Vertex<PageTitle> a1 = checkPageTitle(page1);
-        Vertex<PageTitle> a2 = checkPageTitle(page2);
+        Vertex<Website> a1 = checkVertex(page1);
+        Vertex<Website> a2 = checkVertex(page2);
 
         try {
             digraph.insertEdge(a1, a2, link);
         } catch (InvalidVertexException e) {
-            throw new PageTitleException("The Hyperlink " + link.toString() + " already exists");
+            throw new WebsiteException("The Hyperlink " + link.toString() + " already exists");
         }
     }
 
@@ -256,23 +164,23 @@ public class WebCrawler {
      *
      * @param page
      * @return
-     * @throws PageTitleException
+     * @throws WebsiteException
      */
-    private Vertex<PageTitle> checkPageTitle(PageTitle page) throws PageTitleException {
+    private Vertex<Website> checkVertex(Website page) throws WebsiteException {
 
         if (page == null) {
-            throw new PageTitleException("Page title cannot be null");
+            throw new WebsiteException("Page title cannot be null");
         }
 
-        Vertex<PageTitle> find = null;
-        for (Vertex<PageTitle> v : digraph.vertices()) {
-            if (v.element().equals(page)) { //equals was overriden in PageTitle!!
+        Vertex<Website> find = null;
+        for (Vertex<Website> v : digraph.vertices()) {
+            if (v.element().equals(page)) { //equals was overriden in Website!!
                 find = v;
             }
         }
 
         if (find == null) {
-            throw new PageTitleException("Website with name " + page.getPageTitleName() + " does not exist");
+            throw new WebsiteException("Website with name " + page.getWebsiteName() + " does not exist");
         }
 
         return find;
@@ -284,17 +192,17 @@ public class WebCrawler {
      * @param page1
      * @param page2
      * @return
-     * @throws PageTitleException
+     * @throws WebsiteException
      */
-    public List<Hyperlinks> getHyperlinksesBetween(PageTitle page1, PageTitle page2) throws PageTitleException {
-        Vertex<PageTitle> p1 = checkPageTitle(page1);
-        Vertex<PageTitle> p2 = checkPageTitle(page2);
-        List<Hyperlinks> list = new ArrayList<>();
+    public List<Link> getEdgesBetween(Website page1, Website page2) throws WebsiteException {
+        Vertex<Website> p1 = checkVertex(page1);
+        Vertex<Website> p2 = checkVertex(page2);
+        List<Link> list = new ArrayList<>();
         if (!digraph.areAdjacent(p1, p2)) {
             return list;
         }
-        Iterable<Edge<Hyperlinks, PageTitle>> it = digraph.incidentEdges(p1);
-        for (Edge<Hyperlinks, PageTitle> edge : it) {
+        Iterable<Edge<Link, Website>> it = digraph.incidentEdges(p1);
+        for (Edge<Link, Website> edge : it) {
             if (digraph.opposite(p1, edge) == p2) {
                 list.add(edge.element());
             }
@@ -310,54 +218,52 @@ public class WebCrawler {
     @Override
     public String toString() {
         String str = "WEB CRAWLER (" + digraph.numVertices() + " pagesTitles | " + digraph.numEdges() + " links) \n";
-        for (Vertex<PageTitle> a1 : digraph.vertices()) {
-            for (Vertex<PageTitle> a2 : digraph.vertices()) {
+        for (Vertex<Website> a1 : digraph.vertices()) {
+            for (Vertex<Website> a2 : digraph.vertices()) {
                 if (a1.equals(a2)) {
                     break;
                 }
                 try {
-                    if (!getHyperlinksesBetween(a1.element(), a2.element()).isEmpty()) {
-                        str += "\n [" + a1.element().getPageTitleName() + "]" + " TO " + "[" + a2.element().getPageTitleName() + "]" + "\n";
-                        List<Hyperlinks> l = new ArrayList<>();
-                        l = getHyperlinksesBetween(a1.element(), a2.element());
+                    if (!getEdgesBetween(a1.element(), a2.element()).isEmpty()) {
+                        str += "\n [" + a1.element().getWebsiteName() + "]" + " TO " + "[" + a2.element().getWebsiteName() + "]" + "\n";
+                        List<Link> l = new ArrayList<>();
+                        l = getEdgesBetween(a1.element(), a2.element());
                         for (int i = 0; i < l.size(); i++) {
                             str += "\t" + l.get(i).getLink() + "\n";
                         }
                     }
-                } catch (PageTitleException ex) {
+                } catch (WebsiteException ex) {
                     Logger.getLogger(WebCrawler.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             }
         }
 
-        str += "\nNº Páginas Totais " + getPagesVisited().size();
-        for (int i = 0; i < getPagesVisited().size(); i++) {
+        str += "\nNº Páginas Totais " + webSitesVisited().size();
+        for (int i = 0; i < webSitesVisited().size(); i++) {
             str += "\nPáginas Visitadas ";
             if (i == 0) {
-                str += pagesVisited.get(0) + " [ INICIAL ]";
+                str += webSitesVisited.get(0) + " [ INICIAL ]";
             } else {
-                str += pagesVisited.get(i);
+                str += webSitesVisited.get(i);
             }
 
         }
         str += "\n\nNº Links Visitados " + getLinksVisited().size() + "\n"
                 + "\nLinks Visitados " + getLinksVisited() + "\n"
-                + "\nNº Links Não Visitados " + getLinksNotVisited().size() + "\n"
-                + "\nLinks Não Visitados " + getLinksNotVisited() + "\n"
                 + "\nVertices" + digraph.vertices() + "\n"
                 + "\nEdges" + digraph.edges() + "\n"
                 + "\nA página mais visitada foi ";
         int max = -1;
-        PageTitle pg = new PageTitle();
-        for (Vertex<PageTitle> p : digraph.vertices()) {
+        Website pg = new Website();
+        for (Vertex<Website> p : digraph.vertices()) {
             if (max < digraph.incidentEdges(p).size()) {
                 pg = p.element();
                 max = digraph.incidentEdges(p).size();
             }
         }
 
-        str += pg.getPageTitleName() + "\n";
+        str += pg.getWebsiteName() + "\n";
 
         return str;
     }
@@ -368,12 +274,144 @@ public class WebCrawler {
      * @param pi
      * @return
      */
-    private Vertex<PageTitle> getVertex(PageTitle pi) {
-        for (Vertex<PageTitle> ap : digraph.vertices()) {
+    private Vertex<Website> getVertex(Website pi) {
+        for (Vertex<Website> ap : digraph.vertices()) {
             if (ap.element().equals(pi)) {
                 return ap;
             }
         }
         return null;
+    }
+
+    public void removeAfterCharacters(Link link, String url, String characters) {
+        int indexOf;
+        if (characters.equalsIgnoreCase("#")) {
+            indexOf = url.indexOf(characters);
+            if (indexOf > -1) {
+                url = url.substring(0, indexOf);
+                link.setLink(url);
+            }
+        }
+        
+        if (characters.equalsIgnoreCase("&")) {
+            indexOf = url.indexOf(characters);
+            if (indexOf > -1) {
+                url = url.substring(0, indexOf);
+                link.setLink(url);
+            }
+        }
+    }
+
+    public Set<Link> removeRepeatedLinks(List<Link> links) {
+        for (Link l : links) {
+            String s1 = l.getLink();
+            removeAfterCharacters(l, s1, "#");
+            removeAfterCharacters(l, s1, "/");
+            removeAfterCharacters(l, s1, "&");
+        }
+
+        Set<Link> newList = new HashSet<>(links);
+
+        return newList;
+    }
+
+    public void openUrlAndShowTitleAndLinks(String urlAddress) throws IOException, WebsiteException, LinkException {
+        try {
+            Website site = null;
+            Document doc = Jsoup.connect(urlAddress).get();
+            String title = doc.title();
+            Elements links = doc.select("a[href]");
+            if (title.isEmpty()) {
+                //site.setURL(urlAddress);
+                webSitesVisited.add(new Website("", urlAddress));
+            } else {
+                //site.setWebsiteName(title);
+                //site.setURL(urlAddress);
+                webSitesVisited.add(new Website(title, urlAddress));
+            }
+            for (Element l : links) {
+                if (l.text().isEmpty()) {
+                    linksList.add(new Link("No Description", l.attr("abs:href")));
+                } else {
+                    linksList.add(new Link(l.text(), l.attr("abs:href")));
+                }
+            }
+            for (int i = 0; i < linksList.size(); i++) {
+                if (linksList.get(i).getLink().equals(urlAddress)) {
+                    linksList.remove(i);
+                }
+            }
+            Set<Link> newListSet = removeRepeatedLinks(linksList);
+            for (Website w : webSitesVisited) {
+                if (w.getURL().equals(urlAddress)) {
+                    site = w;
+                }
+            }
+            List<Link> newList = new ArrayList<>(newListSet);
+            bubbleSort(newList);
+            for (Link l : newList) {
+                site.addLink(l);
+                linksVisited.add(l);
+            }
+            addVertex(site);
+            linksList.clear();
+
+        } catch (IOException ex) {
+            System.out.println("HTTP request error" + ex);
+        }
+    }
+
+    public void bubbleSort(List<Link> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = 0; j < list.size() - i - 1; j++) {
+                if (list.get(j).getId() > list.get(j + 1).getId()) {
+                    Link temp = list.get(j);
+                    list.set(j, list.get(j + 1));
+                    list.set(j + 1, temp);
+                }
+            }
+        }
+    }
+
+    /**
+     * Método principal : É dado um URL inicial e a partir dele são adicionados
+     * na lista de links não visitados os links que foram encontrados no URL
+     * passado por parâmetro, se a lista de links não visitados estiver vazia é
+     * enviado um print a informar que a página não contém links,senão ele
+     * percorre sempre em medida do número máximo de páginas que definimos. Cria
+     * um vértice com informação do link da posição zero dos links não visitados
+     * e depois disso é removido fazendo isto até ao critério de paragem ser
+     * cumprido.
+     *
+     * @param url
+     * @throws IOException
+     * @throws WebsiteException
+     * @throws LinkException
+     */
+    public void search(String url) throws IOException, WebsiteException, LinkException {
+        openUrlAndShowTitleAndLinks(url);
+        if (linksVisited.isEmpty()) {
+            System.out.println("**** SORRY BUT THE PAGE " + webSitesVisited.get(0).getWebsiteName() + " DONT HAVE ANY URL. **** \n \n");
+        } else {
+            int count = 1;
+            int number = 1;
+            while (webSitesVisited.size() <= getMaxPagesToSearch()) {
+                openUrlAndShowTitleAndLinks(linksVisited.get(count++).getLink());
+                Set<Link> newList = new HashSet(linksVisited);
+                List<Link> newList1 = new ArrayList(newList);
+                linksVisited = newList1;
+                bubbleSort(linksVisited);
+                addRelation(number++);
+            }
+        }
+
+    }
+
+    public void addRelation(int number) throws WebsiteException, LinkException {
+        try {
+            addEdge(webSitesVisited.get(0), webSitesVisited.get(number), linksVisited.get(number));
+        } catch (InvalidEdgeException ex) {
+            throw new LinkException("Link with the name does not exist");
+        }
     }
 }

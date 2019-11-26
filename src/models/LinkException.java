@@ -9,12 +9,12 @@ package models;
  *
  * @author Bernardo e Fábio
  */
-public class HyperlinksException extends Exception{
+public class LinkException extends Exception{
     /**
      * Exceção dos Hyperlinks
      * @param string 
      */
-    public HyperlinksException(String string) {
+    public LinkException(String string) {
         super(string);
     }  
 }

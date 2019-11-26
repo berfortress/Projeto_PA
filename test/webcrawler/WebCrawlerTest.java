@@ -5,18 +5,13 @@
  */
 package webcrawler;
 
-import models.Hyperlinks;
-import models.HyperlinksException;
-import models.PageTitleException;
-import models.PageTitle;
-import adtgraph.Vertex;
-import enums.Criteria;
+import models.Link;
+import models.LinkException;
+import models.WebsiteException;
+import models.Website;
 import java.io.IOException;
-import java.util.List;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -37,37 +32,27 @@ public class WebCrawlerTest {
     }
 
     /**
-     * Test of getPagesVisited method, of class WebCrawler.
+     * Test of webSitesVisited method, of class WebCrawler2.
      */
     @Test
-    public void testGetPagesVisited() throws IOException, PageTitleException, HyperlinksException {
-        assertEquals("A implementação não retorna vazio após a sua criação 01", true, wc.getPagesVisited().isEmpty());
+    public void testGetPagesVisited() throws IOException, WebsiteException, LinkException {
+        assertEquals("A implementação não retorna vazio após a sua criação 01", true, wc.webSitesVisited().isEmpty());
         wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
-        assertEquals("A implementação não retorna vazio após a sua criação 02", false, wc.getPagesVisited().isEmpty());
+        assertEquals("A implementação não retorna vazio após a sua criação 02", false, wc.webSitesVisited().isEmpty());
     }
 
     /**
-     * Test of getLinksVisited method, of class WebCrawler.
+     * Test of getLinksVisited method, of class WebCrawler2.
      */
     @Test
-    public void testGetLinksVisited() throws IOException, PageTitleException, HyperlinksException{
+    public void testGetLinksVisited() throws IOException, WebsiteException, LinkException{
         assertEquals("A implementação não retorna vazio após a sua criação", true, wc.getLinksVisited().isEmpty());
         wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
         assertEquals("A implementação não retorna vazio após a sua criação", false, wc.getLinksVisited().isEmpty());
     }
 
     /**
-     * Test of getLinksNotVisited method, of class WebCrawler.
-     */
-    @Test
-    public void testGetLinksNotVisited() throws IOException, PageTitleException, HyperlinksException {
-        assertEquals("A implementação não retorna vazio após a sua criação", true, wc.getLinksNotVisited().isEmpty());
-        wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
-        assertEquals("A implementação não retorna vazio após a sua criação", false, wc.getLinksNotVisited().isEmpty());
-    }
-
-    /**
-     * Test of getMaxPagesToSearch method, of class WebCrawler.
+     * Test of getMaxPagesToSearch method, of class WebCrawler2.
      */
     @Test
     public void testGetMaxPagesToSearch() {
@@ -75,70 +60,58 @@ public class WebCrawlerTest {
     }
 
     /**
-     * Test of getAllPageTitle method, of class WebCrawler.
+     * Test of getAllWebsites method, of class WebCrawler2.
      */
     @Test
     public void testGetAllPageTitle() {
-        assertEquals("O objeto da classe digrafo não pode ser null", true, wc.getAllPageTitle() != null);
+        assertEquals("O objeto da classe digrafo não pode ser null", true, wc.getAllWebsites() != null);
     }
 
     /**
-     * Test of search method, of class WebCrawler.
+     * Test of search method, of class WebCrawler2.
      */
     @Test
     public void testSearch() throws Exception {
         wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
-        assertEquals("A implementação não retorna vazio após a sua criação 02", false, wc.getPagesVisited().isEmpty());
-        assertEquals("A implementação não retorna vazio após a sua criação", false, wc.getLinksVisited().isEmpty());
-        assertEquals("A implementação não retorna vazio após a sua criação", false, wc.getLinksNotVisited().isEmpty());
-        
-        
+        assertEquals("A implementação não retorna vazio após a sua criação 02", false, wc.webSitesVisited().isEmpty());
+        assertEquals("A implementação não retorna vazio após a sua criação", false, wc.getLinksVisited().isEmpty());      
     }
 
     /**
-     * Test of addRelation method, of class WebCrawler.
-     */
-    @Test
-    public void testAddRelation() throws Exception {
-        wc.addRelation();
-        assertEquals("A implementação não retorna vazio após a sua criação", true, wc.getAllHyperlinks() != null);
-    }
-
-    /**
-     * Test of addPageTitle method, of class WebCrawler.
+     * Test of addPageTitle method, of class WebCrawler2.
      */
     @Test
     public void testAddPageTitle() throws Exception {
-        PageTitle p = new PageTitle();
-        wc.addPageTitle(p);
-        assertEquals("A implementação não está a adicionar o elemento", true, wc.getAllPageTitle() != null);
+        Website p = new Website();
+        wc.addVertex(p);
+        assertEquals("A implementação não está a adicionar o elemento", true, wc.getAllWebsites() != null);
     }
 
     /**
-     * Test of addHyperLinks method, of class WebCrawler.
+     * Test of addHyperLinks method, of class WebCrawler2.
      */
     @Test
     public void testAddHyperLinks() throws Exception {
-        PageTitle p1 = new PageTitle();
-        PageTitle p2 = new PageTitle();
-        wc.addPageTitle(p1);
-        wc.addPageTitle(p2);
-        Hyperlinks h1 = new Hyperlinks();
-        wc.addHyperLinks(p1, p2, h1);
-        assertEquals("A implementação não está a adicionar o elemento", true, wc.getAllHyperlinks() != null);
+        Website p1 = new Website();
+        Website p2 = new Website();
+        wc.addVertex(p1);
+        wc.addVertex(p2);
+        Link h1 = new Link();
+        wc.addEdge(p1, p2, h1);
+        assertEquals("A implementação não está a adicionar o elemento", true, wc.getAllLinks() != null);
     }
 
     /**
-     * Test of getHyperlinksesBetween method, of class WebCrawler.
+     * Test of getHyperlinksesBetween method, of class WebCrawler2.
      */
     @Test
     public void testGetHyperlinksesBetween() throws Exception {
-        PageTitle p1 = new PageTitle();
-        PageTitle p2 = new PageTitle();
-        wc.addPageTitle(p1);
-        wc.addPageTitle(p2);
-        Hyperlinks h1 = new Hyperlinks();
-        wc.addHyperLinks(p1, p2, h1);
-        assertEquals("A implementação não está a verificar se o elemento tem arestas entre os vertices", true, wc.getHyperlinksesBetween(p1, p2) != null);
+        Website p1 = new Website();
+        Website p2 = new Website();
+        wc.addVertex(p1);
+        wc.addVertex(p2);
+        Link h1 = new Link();
+        wc.addEdge(p1, p2, h1);
+        assertEquals("A implementação não está a verificar se o elemento tem arestas entre os vertices", true, wc.getEdgesBetween(p1, p2) != null);
     }    
 }

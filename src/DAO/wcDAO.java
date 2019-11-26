@@ -5,7 +5,7 @@
  */
 package DAO;
 
-import models.PageTitle;
+import models.Website;
 
 /**
  *
@@ -13,7 +13,7 @@ import models.PageTitle;
  */
 public interface wcDAO {
 
-    public void saveWC(PageTitle wc);
+    public void saveWC(Website wc);
 
-    public PageTitle loadWC(String pageTitleName);
+    public Website loadWC(String pageTitleName);
 }

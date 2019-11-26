@@ -13,81 +13,81 @@ import java.util.List;
  *
  * @author Bernardo e Fábio
  */
-public class PageTitle implements Serializable{
+public class Website implements Serializable{
     private int id = 0;
     private static int count = 0;
-    private String pageTitleName;
-    private String pageAddress;
-    private List<Hyperlinks> hyper;
+    private String name;
+    private String url;
+    private List<Link> links;
 
     /**
      * Construtor da Página
      * @param pageTitleName
      * @param pageAddress 
      */
-    public PageTitle(String pageTitleName, String pageAddress) {
+    public Website(String name, String url) {
         this.id = ++count;
-        this.pageTitleName = pageTitleName;
-        this.pageAddress = pageAddress;
-        hyper = new ArrayList<>();
+        this.name = name;
+        this.url = url;
+        links = new ArrayList<>();
     }  
 
     /**
      * Construtor da Página
      */
-    public PageTitle() {
+    public Website() {
         this.id = ++count;
-        this.pageTitleName = "";
-        this.pageAddress = "";
-        hyper = new ArrayList<>();
+        this.name = "";
+        this.url = "";
+        links = new ArrayList<>();
     }
     
     /**
      * Método que adiciona links a uma página específica.
      * @param h 
      */
-    public void addHyperlink(Hyperlinks h){
-        hyper.add(h);
+    public void addLink(Link h){
+        links.add(h);
     }
 
     /**
      * Método que retorna uma lista de links de uma página.
      * @return 
      */
-    public List<Hyperlinks> getHyper() {
-        return hyper;
+    public List<Link> getLinks() {
+        return links;
     }
 
     /**
      * Retorna o nome da página.
      * @return 
      */
-    public String getPageTitleName() {
-        return pageTitleName;
+    public String getWebsiteName() {
+        return name;
     }
 
     /**
      * Retorna o URL da página.
      * @return 
      */
-    public String getPageAddress() {
-        return pageAddress;
+    public String getURL() {
+        return url;
     }
 
     /**
      * Altera o URL da página.
      * @param pageAddress 
      */
-    public void setPageAddress(String pageAddress) {
-        this.pageAddress = pageAddress;
+    public void setURL(String url) {
+        this.url = url;
     }
     
     /**
      * Altera o nome da página.
      * @param pageTitleName 
      */
-    public void setPageTitleName(String pageTitleName) {
-        this.pageTitleName = pageTitleName;
+    public void setWebsiteName(String name) {
+        this.name = name;
     }
 
     /**
@@ -99,12 +99,12 @@ public class PageTitle implements Serializable{
     }
 
     /**
-     * Descrição do PageTitle.
+     * Descrição do Website.
      * @return 
      */
     @Override
     public String toString() {
-        return id + "[" + getPageTitleName() + "] "+ getPageAddress();
+        return id + " [" + getWebsiteName() + "] " + getURL();
     }
     
     /**
@@ -123,7 +123,7 @@ public class PageTitle implements Serializable{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final PageTitle other = (PageTitle) obj;
+        final Website other = (Website) obj;
         return this.id == other.getId();
     }
     

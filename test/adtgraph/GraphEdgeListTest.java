@@ -13,8 +13,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import models.Hyperlinks;
-import models.PageTitle;
+import models.Link;
+import models.Website;
 
 /**
  *
