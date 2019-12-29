@@ -18,7 +18,7 @@ public class Website implements Serializable{
     private static int count = 0;
     private String name;
     private String url;
-    private List<Link> links;
+    private Link link;
 
     /**
      * Construtor da Página
@@ -29,7 +29,7 @@ public class Website implements Serializable{
         this.id = ++count;
         this.name = name;
         this.url = url;
-        links = new ArrayList<>();
+        this.link = null;
     }  
 
     /**
@@ -39,7 +39,7 @@ public class Website implements Serializable{
         this.id = ++count;
         this.name = "";
         this.url = "";
-        links = new ArrayList<>();
+        link = null;
     }
     
     /**
@@ -47,15 +47,15 @@ public class Website implements Serializable{
      * @param h 
      */
     public void addLink(Link h){
-        links.add(h);
+        link = new Link(h.getDescription(), h.getLink());
     }
 
     /**
      * Método que retorna uma lista de links de uma página.
      * @return 
      */
-    public List<Link> getLinks() {
-        return links;
+    public Link getLink() {
+        return link;
     }
 
     /**

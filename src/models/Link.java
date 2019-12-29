@@ -98,7 +98,7 @@ public class Link {
     @Override
     public String toString() {
         //return "ID "  + getId();
-        return "ID" + getId();
+        return "ID" + getId() + " " + getLink();
     }
 
     /**

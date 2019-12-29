@@ -24,7 +24,7 @@ public class Main {
     
 
     public static void main(String[] args) throws IOException, WebsiteException, LinkException {
-        wcDAO jsonDAO = new wcJsonDAO("C:\\Users\\berna\\Documents\\GitHub\\Projeto_PA");
+        wcDAO jsonDAO = new wcJsonDAO("./");
         
         System.out.println("=====================================================");
         System.out.println("\t\t     WELCOME");
@@ -44,7 +44,8 @@ public class Main {
                     System.out.print("Número máximo de páginas procuradas: ");
                     int maxNum = myObj.nextInt();
                     WebCrawler wc = new WebCrawler(maxNum);
-                    wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
+//                    wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
+                    wc.automatic("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
                     if (!wc.getLinksVisited().isEmpty() || maxNum >= 1) {
                         System.out.println(wc.toString());
                     }
