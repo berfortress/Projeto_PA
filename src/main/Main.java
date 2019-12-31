@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import models.LinkException;
 import models.WebsiteException;
 import java.util.Scanner;
+import models.Iterative;
 import models.Website;
 import webcrawler.WebCrawler;
 
@@ -59,7 +60,7 @@ public class Main {
                     System.out.print("Número máximo de páginas procuradas: ");
                     int maxNum = myObj.nextInt();
                     WebCrawler wc = new WebCrawler(maxNum);
-                    wc.search(url);
+                    wc.automatic(url);
                     if (!wc.getLinksVisited().isEmpty() || maxNum >= 1) {
                         System.out.println(wc.toString());
                     }
@@ -70,7 +71,29 @@ public class Main {
                 }
                 
             } else if(option == 2){
-                System.out.println("Não Implementado");
+                System.out.print("Pretende usar página default: \"https://moodle.ips.pt/1920/course/index.php?categoryid=7\" [YES/NO] -> ");
+                String choose = myObj.next();
+                if (choose.equalsIgnoreCase("y") || choose.equalsIgnoreCase("yes")) {
+                    
+                    Iterative wc = new Iterative();
+                    wc.executeIterative("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
+                    if (!wc.getLinksVisited().isEmpty()) {
+                        System.out.println(wc.toString());
+                    }
+                    
+                    for (Website p : wc.webSitesVisited()) {
+                        jsonDAO.saveWC(p);
+                    }
+                } else if (choose.equalsIgnoreCase("n") || choose.equalsIgnoreCase("no")) {
+                    System.out.print("Insira url : ");
+                    String url = myObj.next();
+                    
+                    WebCrawler wc = new Iterative();
+                    
+                    for (Website p : wc.webSitesVisited()) {
+                        jsonDAO.saveWC(p);
+                    }
+                }
             }else if(option != 1 || option != 2){
                 System.out.println("Escolha apenas 1 ou 2");
             }

@@ -9,7 +9,9 @@ package models;
  *
  * @author fabio
  */
-public interface Memento {
-    public Link MementoLink();
-    public Website MementoWebsite();
+ public interface Originator {
+    
+    public Memento createMemento();
+    public void setMemento(Memento savedState);
+    
 }

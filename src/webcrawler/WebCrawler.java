@@ -42,6 +42,7 @@ public class WebCrawler {
     private List<Website> webSitesVisited;
     private final Digraph<Website, Link> digraph;
     private Website site;
+    private List<String> dupLinks, dupWebsites;
 
     /**
      * Construtor da classe WebCrawler
@@ -55,6 +56,8 @@ public class WebCrawler {
         this.linksList = new ArrayList<>();
         this.webSitesVisited = new ArrayList<>();
         this.site = null;
+        this.dupLinks = new ArrayList<>();
+        this.dupWebsites = new ArrayList<>();
     }
 
     /**
@@ -67,6 +70,8 @@ public class WebCrawler {
         this.webSitesVisited = new ArrayList<>();
         this.linksList = new ArrayList<>();
         this.site = null;
+        this.dupLinks = new ArrayList<>();
+        this.dupWebsites = new ArrayList<>();
     }
 
     /**
@@ -287,7 +292,7 @@ public class WebCrawler {
      * @param pi
      * @return
      */
-    private Vertex<Website> getVertex(Website pi) {
+    protected Vertex<Website> getVertex(Website pi) {
         for (Vertex<Website> ap : digraph.vertices()) {
             if (ap.element().equals(pi)) {
                 return ap;
@@ -302,7 +307,7 @@ public class WebCrawler {
      * @param pi
      * @return
      */
-    private Edge<Link, Website> getEdge(Link pi) {
+    protected Edge<Link, Website> getEdge(Link pi) {
         for (Edge<Link, Website> ap : digraph.edges()) {
             if (ap.element().equals(pi)) {
                 return ap;
@@ -361,10 +366,16 @@ public class WebCrawler {
 
             if (title.isEmpty()) {
                 web = new Website("", "");
-                webSitesVisited.add(web);
+                if (!dupWebsites.contains("")) {
+                    webSitesVisited.add(web);
+                    dupWebsites.add("");
+                }
             } else {
                 web = new Website(title, urlAddress);
-                webSitesVisited.add(web);
+                if (!dupWebsites.contains(urlAddress)) {
+                    webSitesVisited.add(web);
+                    dupWebsites.add(urlAddress);
+                }
             }
 
             for (Element l : links) {
@@ -395,10 +406,8 @@ public class WebCrawler {
             bubbleSort(newList);
             for (Link l : newList) {
                 site.addLink(l);
-                if (!linksToVisit.contains(l.getLink())) {
-                    linksToVisit.add(l);
-                    test.add(l);
-                }
+                linksToVisit.add(l);
+                test.add(l);
             }
 
             for (int i = 0; i < linksToVisit.size(); i++) {
@@ -476,6 +485,17 @@ public class WebCrawler {
 
         for (Edge<Link, Website> link : digraph.incidentEdges(w)) {
             Vertex<Website> web2 = digraph.opposite(w, link);
+            sites.add(web2);
+        }
+        return sites;
+    }
+    
+    public List<Vertex<Website>> getAdjacentsElem(Website w) {
+        Vertex<Website> vertexWeb = getVertex(w);
+        List<Vertex<Website>> sites = new ArrayList<>();
+
+        for (Edge<Link, Website> link : digraph.incidentEdges(vertexWeb)) {
+            Vertex<Website> web2 = digraph.opposite(vertexWeb, link);
             sites.add(web2);
         }
         return sites;
