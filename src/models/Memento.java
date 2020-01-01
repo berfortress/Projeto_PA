@@ -5,11 +5,14 @@
  */
 package models;
 
+import java.util.List;
+
 /**
  *
  * @author fabio
  */
 public interface Memento {
-    public Link MementoLink();
+    public List<Link> MementoLinks();
     public Website MementoWebsite();
+    public List<Website> MementoWebsites();
 }

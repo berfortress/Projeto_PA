@@ -5,68 +5,93 @@
  */
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author fabio
  */
 public class WebLink implements Originator {
-    private Link link;
+    private List<Link> links;
+    private List<Website> websites;
     private Website website;
     
     public WebLink(Link link, Website website){
-        this.link = link;
+        this.links = new ArrayList<>();
+        this.websites = new ArrayList<>();
         this.website = website;
     }
 
-    public void setLink(Link link) {
-        this.link = link;
+    public void setLinks(List<Link> links) {
+        this.links = links;
+    }
+    
+    public void setWebsites(List<Website> websites) {
+        this.websites = new ArrayList<>(websites);
     }
 
     public void setWebsite(Website website) {
         this.website = website;
     }
 
-    public Link getLink() {
-        return link;
+    public List<Link> getLink() {
+        return links;
     }
 
     public Website getWebsite() {
         return website;
     }
 
+    public List<Website> getWebsites() {
+        return websites;
+    }
+
     @Override
     public String toString() {
-        return link.toString() + "\n" + website.toString();
+        String str = "[PÁGINA ATUAL] " + website.toString() + "\n--------Páginas a que pode aceder--------\n";
+        for(Website w : websites){
+            str += w.toString() + "\n";
+        }
+        return str;
     }
 
     @Override
     public Memento createMemento() {
-        return new MementoWebSite(link, website);
+        return new MementoWebSite(website);
     }
 
     @Override
     public void setMemento(Memento savedState) {
-        link = ((MementoWebSite)savedState).MementoLink();
+        links = ((MementoWebSite)savedState).MementoLinks();
+        websites = ((MementoWebSite)savedState).MementoWebsites(); 
         website = ((MementoWebSite)savedState).MementoWebsite();
     }
     
     private class MementoWebSite implements Memento {
-        private Link mementoLink;
+        private List<Link> mementoLinks;
+        private List<Website> mementoWebsites;
         private Website mementoWebsite;
 
-        public MementoWebSite(Link mementoLink, Website mementoWebsite) {
-            this.mementoLink = new Link(mementoLink.getDescription(), mementoLink.getLink());
-            this.mementoWebsite = new Website(mementoWebsite.getWebsiteName(), mementoWebsite.getURL());
+        public MementoWebSite(Website mementoWebsite) {
+            this.mementoLinks = new ArrayList<>();
+            this.mementoWebsites = new ArrayList<>();
+            this.mementoWebsite = new Website(mementoWebsite);
         }
         
         @Override
-        public Link MementoLink() {
-            return mementoLink;
+        public List<Link> MementoLinks() {
+            return mementoLinks;
         }
 
         @Override
         public Website MementoWebsite() {
             return mementoWebsite;
+        }
+        
+        @Override
+        public List<Website> MementoWebsites() {
+            return mementoWebsites;
         }
     
     }

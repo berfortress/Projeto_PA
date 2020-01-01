@@ -31,6 +31,13 @@ public class Website implements Serializable{
         this.url = url;
         this.link = null;
     }  
+    
+    public Website(Website web) {
+        this.id = web.getId();
+        this.name = web.getWebsiteName();
+        this.url = web.getURL();
+        this.link = web.getLink();
+    }
 
     /**
      * Construtor da Página

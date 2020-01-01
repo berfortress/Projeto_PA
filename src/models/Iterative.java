@@ -49,6 +49,7 @@ public class Iterative extends WebCrawler {
 
         List<Website> websites = webSitesVisited();
         List<Link> links = getLinksVisited();
+        List<Link> lin = new ArrayList<>();
         Website web = websites.get(0);
 
         int count = 1;
@@ -59,13 +60,6 @@ public class Iterative extends WebCrawler {
             count++;
         }
 
-        webLink.setLink(web.getLink());
-        webLink.setWebsite(web);
-        care.saveState(webLink);
-
-        System.out.println("ENTREEEEEEEEI 1 : " + getAllWebsites());
-        System.out.println("ENTREEEEEEEEI 2 : " + getAllLinks());
-
         writeMenu(websites);
 
         String op = "";
@@ -75,6 +69,8 @@ public class Iterative extends WebCrawler {
         while (!op.equals("s")) {
             switch (op) {
                 case "1":
+                    List<Link> linkList = new ArrayList<>();
+                    List<Website> websList = new ArrayList<>();
                     System.out.println("----------------------------------------------------------------------");
                     System.out.println("[PÁGINA ATUAL] - " + web1);
                     System.out.println("----------------------------------------------------------------------");
@@ -83,11 +79,20 @@ public class Iterative extends WebCrawler {
                     String str = "";
                     int count1 = 1;
                     List<Website> listOfWebs = new ArrayList<>();
-                    for (Vertex<Website> w : getAdjacentsElem(web1)) {
+                    Vertex<Website> webVertex = getVertex(web1);
+                    for (Vertex<Website> w : getAdjacents(webVertex)) {
                         str += count1 + " - " + w.element().getURL() + "\n";
                         listOfWebs.add(w.element());
                         count1++;
+                        linkList.add(w.element().getLink());
+                        websList.add(w.element());
                     }
+                    
+                    webLink.setLinks(linkList);
+                    webLink.setWebsite(web1);
+                    webLink.setWebsites(websList);
+                    care.saveState(webLink);
+                    
                     System.out.println(str);
                     System.out.println("----------------------------------------------------------------------");
                     System.out.println("\n" + listOfWebs + "\n");
@@ -118,7 +123,14 @@ public class Iterative extends WebCrawler {
                     break;
 
                 case "u":
-                    undo();
+                    if(care.objMementos.isEmpty()){
+                        System.out.println("----------------------------------------------------------------------");
+                        System.out.println("Não é possivel efetuar mais o comando undo, pois está na página inicial!");
+                        System.out.println("----------------------------------------------------------------------");
+                    } else {
+                        undo();
+                        web1 = webLink.getWebsite();
+                    }
                     break;
             }
             //writeMenu();
