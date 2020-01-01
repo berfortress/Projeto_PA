@@ -6,6 +6,8 @@
 package main;
 import DAO.wcDAO;
 import DAO.wcJsonDAO;
+import DAO.wcSerializationDAO;
+import DAO.WcDAOFactory;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +27,7 @@ public class Main {
     
 
     public static void main(String[] args) throws IOException, WebsiteException, LinkException {
-        wcDAO jsonDAO = new wcJsonDAO("./");
+        wcDAO dao = WcDAOFactory.createWcDAO("onejson", "./");
         
         System.out.println("=====================================================");
         System.out.println("\t\t     WELCOME");
@@ -45,14 +47,14 @@ public class Main {
                     System.out.print("Número máximo de páginas procuradas: ");
                     int maxNum = myObj.nextInt();
                     WebCrawler wc = new WebCrawler(maxNum);
-//                    wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
                     wc.automatic("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
+                    
                     if (!wc.getLinksVisited().isEmpty() || maxNum >= 1) {
                         System.out.println(wc.toString());
                     }
                     
                     for (Website p : wc.webSitesVisited()) {
-                        jsonDAO.saveWC(p);
+                        dao.saveWC(p);
                     }
                 } else if (choose.equalsIgnoreCase("n") || choose.equalsIgnoreCase("no")) {
                     System.out.print("Insira url : ");
@@ -66,7 +68,7 @@ public class Main {
                     }
                     
                     for (Website p : wc.webSitesVisited()) {
-                        jsonDAO.saveWC(p);
+                        dao.saveWC(p);
                     }
                 }
                 
@@ -82,7 +84,7 @@ public class Main {
                     }
                     
                     for (Website p : wc.webSitesVisited()) {
-                        jsonDAO.saveWC(p);
+                        dao.saveWC(p);
                     }
                 } else if (choose.equalsIgnoreCase("n") || choose.equalsIgnoreCase("no")) {
                     System.out.print("Insira url : ");
@@ -91,7 +93,7 @@ public class Main {
                     WebCrawler wc = new Iterative();
                     
                     for (Website p : wc.webSitesVisited()) {
-                        jsonDAO.saveWC(p);
+                        dao.saveWC(p);
                     }
                 }
             }else if(option != 1 || option != 2){

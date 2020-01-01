@@ -24,7 +24,7 @@ import models.Website;
 public class wcJsonDAO implements wcDAO{
     
     private String basePath;
-    private static final String fileName = "webCrawler.json";
+    private static final String fileName = "webCrawlerJson.json";
 
     public wcJsonDAO(String basePath) {
         this.basePath = basePath;
