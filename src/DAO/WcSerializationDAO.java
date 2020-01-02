@@ -21,14 +21,14 @@ import models.Website;
  *
  * @author fabio
  */
-public class DAOSerialization implements DAO {
+public class WcSerializationDAO implements WcDAO {
 
     public static final String FILENAME = "webCrawlerSerialization.";
-    private final String basePath;
+    private String basePath;
 
     private List<Website> inMemory;
 
-    public DAOSerialization(String basePath) {
+    public WcSerializationDAO(String basePath) {
         this.basePath = basePath;
         inMemory = new ArrayList<>();
         loadFile();
@@ -47,7 +47,7 @@ public class DAOSerialization implements DAO {
 
             fileOut.close();
         } catch (IOException e) {
-            Logger.getLogger(DAOSerialization.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(WcSerializationDAO.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -65,9 +65,9 @@ public class DAOSerialization implements DAO {
             in.close();
             fileIn.close();
         } catch (IOException e) {
-            Logger.getLogger(DAOSerialization.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(WcSerializationDAO.class.getName()).log(Level.SEVERE, null, e);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DAOSerialization.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WcSerializationDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author fabio e bernardo
+ * @author fabio
  */
 public class PageTitleTest {
     private Website page;

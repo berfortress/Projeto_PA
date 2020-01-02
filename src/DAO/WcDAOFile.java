@@ -18,11 +18,11 @@ import models.Website;
  *
  * @author fabio
  */
-public class DAOFile implements DAO{
+public class WcDAOFile implements WcDAO{
     
     private String basePath;
 
-    public DAOFile(String basePath) {
+    public WcDAOFile(String basePath) {
         this.basePath = basePath;
     }
 
@@ -35,17 +35,16 @@ public class DAOFile implements DAO{
             fw.write("\nURL: " + wc.getURL());
             fw.close();
         } catch (IOException ex) {
-            Logger.getLogger(DAOFile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WcDAOFile.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 fw.close();
             } catch (IOException ex) {
-                Logger.getLogger(DAOFile.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WcDAOFile.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
-    @Override
     public Website loadWC(String pageTitleName) {
         Scanner sc = null;
         try {

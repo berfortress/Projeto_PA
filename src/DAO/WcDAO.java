@@ -11,7 +11,7 @@ import models.Website;
  *
  * @author fabio
  */
-public interface DAO {
+public interface WcDAO {
 
     public void saveWC(Website wc);
 

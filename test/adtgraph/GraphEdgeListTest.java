@@ -5,13 +5,20 @@
  */
 package adtgraph;
 
+import java.util.Collection;
+import javafx.scene.control.Hyperlink;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import models.Link;
+import models.Website;
 
 /**
  *
- * @author fabio e bernardo
+ * @author fabio
  */
 public class GraphEdgeListTest {
     private GraphEdgeList digraph;

@@ -49,16 +49,14 @@ public class Iterative extends WebCrawler {
 
         List<Website> websites = webSitesVisited();
         List<Link> links = getLinksVisited();
-        List<Link> websitesLinks = new ArrayList<>(links);
         Website web = websites.get(0);
 
         int count = 1;
-        while (!websitesLinks.isEmpty()) {
+        while (websites.size() <= 8) {
             openUrlAndShowTitleAndLinks(links.get(count).getLink());
             bubbleSort(links);
             addEdge(web, websites.get(count), links.get(count));
             count++;
-            websitesLinks.remove(0);
         }
 
         writeMenu();
@@ -94,6 +92,8 @@ public class Iterative extends WebCrawler {
                     care.saveState(webLink);
 
                     System.out.println(str);
+                    System.out.println("----------------------------------------------------------------------");
+                    System.out.println("\n" + listOfWebs + "\n");
                     System.out.print("Insira o número da página à qual deseja aceder : ");
                     String v = "";
                     v = sc.next();
@@ -102,7 +102,8 @@ public class Iterative extends WebCrawler {
                     if (val - 1 <= websites.size()) {
                         web = listOfWebs.get(val - 1);
                         List<Link> linksList = openUrlAndShowTitleAndLinks(web.getURL());
-                        System.out.println("Insira 1 para aceder, s para sair ou u para undo");
+                        System.out.println("\n" + linksList + "\n");
+
                         int count2 = 0;
                         while (linksList.size() - 1 > count2 && websites.size() > count2) {
                             openUrlAndShowTitleAndLinks(linksList.get(count2).getLink());
@@ -127,14 +128,14 @@ public class Iterative extends WebCrawler {
                     } else {
                         undo();
                         web = webLink.getWebsite();
-
+                        Vertex<Website> webVertex1 = getVertex(web);
                         List<String> dupWebs = new ArrayList<>();
 
                         String str1 = "[PÁGINA ATUAL] " + web.toString() + "\n--------Páginas a que pode aceder--------\n";
                         List<Website> webs = getAdjacentsElem(web);
                         bubbleSortWeb(webs);
                         for (Website w : webs) {
-                            if (!dupWebs.contains(w.getURL())) {
+                            if(!dupWebs.contains(w.getURL())){
                                 str1 += w.toString() + "\n";
                                 dupWebs.add(w.getURL());
                             }
@@ -143,6 +144,7 @@ public class Iterative extends WebCrawler {
                     }
                     break;
             }
+            //writeMenu();
             System.out.print("Nova Opção -> ");
             op = sc.next();
 
