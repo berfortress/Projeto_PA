@@ -16,13 +16,13 @@ import models.Website;
 
 /**
  *
- * @author fabio
+ * @author fabio e bernardo
  */
-public class WcDAOFile implements WcDAO{
+public class DAOFile implements DAO{
     
     private String basePath;
 
-    public WcDAOFile(String basePath) {
+    public DAOFile(String basePath) {
         this.basePath = basePath;
     }
 
@@ -35,12 +35,12 @@ public class WcDAOFile implements WcDAO{
             fw.write("\nURL: " + wc.getURL());
             fw.close();
         } catch (IOException ex) {
-            Logger.getLogger(WcDAOFile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DAOFile.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 fw.close();
             } catch (IOException ex) {
-                Logger.getLogger(WcDAOFile.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DAOFile.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

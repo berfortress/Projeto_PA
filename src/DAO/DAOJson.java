@@ -19,14 +19,14 @@ import models.Website;
 
 /**
  *
- * @author fabio
+ * @author fabio e bernardo
  */
-public class WcJsonDAO implements WcDAO{
+public class DAOJson implements DAO{
     
     private String basePath;
     private static final String fileName = "webCrawlerJson.json";
 
-    public WcJsonDAO(String basePath) {
+    public DAOJson(String basePath) {
         this.basePath = basePath;
     }
 
@@ -57,7 +57,7 @@ public class WcJsonDAO implements WcDAO{
             writer.flush();
             writer.close();
         } catch (IOException ex) {
-            Logger.getLogger(WcJsonDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DAOJson.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

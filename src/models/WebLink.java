@@ -10,8 +10,9 @@ import java.util.List;
 
 /**
  *
- * @author fabio
+ * @author fabio e bernardo
  */
+
 public class WebLink implements Originator {
     private List<Link> links;
     private List<Website> websites;

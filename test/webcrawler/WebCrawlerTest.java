@@ -17,8 +17,9 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author fabio
+ * @author fabio e bernardo
  */
+
 public class WebCrawlerTest {
     private WebCrawler wc;
     
@@ -37,7 +38,7 @@ public class WebCrawlerTest {
     @Test
     public void testGetPagesVisited() throws IOException, WebsiteException, LinkException {
         assertEquals("A implementação não retorna vazio após a sua criação 01", true, wc.webSitesVisited().isEmpty());
-        wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
+        wc.automatic("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
         assertEquals("A implementação não retorna vazio após a sua criação 02", false, wc.webSitesVisited().isEmpty());
     }
 
@@ -47,7 +48,7 @@ public class WebCrawlerTest {
     @Test
     public void testGetLinksVisited() throws IOException, WebsiteException, LinkException{
         assertEquals("A implementação não retorna vazio após a sua criação", true, wc.getLinksVisited().isEmpty());
-        wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
+        wc.automatic("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
         assertEquals("A implementação não retorna vazio após a sua criação", false, wc.getLinksVisited().isEmpty());
     }
 
@@ -72,7 +73,7 @@ public class WebCrawlerTest {
      */
     @Test
     public void testSearch() throws Exception {
-        wc.search("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
+        wc.automatic("https://moodle.ips.pt/1920/course/index.php?categoryid=7");
         assertEquals("A implementação não retorna vazio após a sua criação 02", false, wc.webSitesVisited().isEmpty());
         assertEquals("A implementação não retorna vazio após a sua criação", false, wc.getLinksVisited().isEmpty());      
     }

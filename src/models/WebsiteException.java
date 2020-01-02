@@ -7,8 +7,9 @@ package models;
 
 /**
  *
- * @author fabio
+ * @author fabio e bernardo
  */
+
 public class WebsiteException extends Exception {
     /**
      * Exceção das PageTitle

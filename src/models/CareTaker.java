@@ -9,8 +9,9 @@ import java.util.Stack;
 
 /**
  *
- * @author fabio
+ * @author fabio e bernardo
  */
+
 public class CareTaker {
     
     public Stack<Memento> objMementos;

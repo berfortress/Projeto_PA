@@ -13,8 +13,9 @@ import webcrawler.WebCrawler;
 
 /**
  *
- * @author fabio
+ * @author fabio e bernardo
  */
+
 public final class Logger {
     private static Logger instance = new Logger();
     LocalDate timestamp = LocalDate.now();

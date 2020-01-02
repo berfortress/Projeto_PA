@@ -7,8 +7,9 @@ package models;
 
 /**
  *
- * @author fabio
+ * @author fabio e bernardo
  */
+
  public interface Originator {
     
     public Memento createMemento();

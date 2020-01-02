@@ -6,13 +6,12 @@
 package models;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
- * @author Bernardo e Fábio
+ * @author fabio e bernardo
  */
+
 public class Website implements Serializable{
     private int id = 0;
     private static int count = 0;

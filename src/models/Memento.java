@@ -9,8 +9,9 @@ import java.util.List;
 
 /**
  *
- * @author fabio
+ * @author fabio e bernardo
  */
+
 public interface Memento {
     public List<Link> MementoLinks();
     public Website MementoWebsite();

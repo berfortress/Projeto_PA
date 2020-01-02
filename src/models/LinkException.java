@@ -7,8 +7,9 @@ package models;
 
 /**
  *
- * @author Bernardo e Fábio
+ * @author fabio e bernardo
  */
+
 public class LinkException extends Exception{
     /**
      * Exceção dos Hyperlinks

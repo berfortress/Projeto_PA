@@ -9,8 +9,9 @@ import java.util.Objects;
 
 /**
  *
- * @author Bernardo e Fábio
+ * @author fabio e bernardo
  */
+
 public class Link {
     private int id = 0;
     private static int count = 0; 

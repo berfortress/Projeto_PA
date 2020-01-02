@@ -9,9 +9,9 @@ import models.Website;
 
 /**
  *
- * @author fabio
+ * @author fabio e bernardo
  */
-public interface WcDAO {
+public interface DAO {
 
     public void saveWC(Website wc);
 

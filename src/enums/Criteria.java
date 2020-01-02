@@ -7,7 +7,7 @@ package enums;
 
 /**
  *
- * @author berna
+ * @author fabio e bernardo
  */
 public enum Criteria {
     
