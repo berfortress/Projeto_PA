@@ -441,6 +441,18 @@ public class WebCrawler {
             }
         }
     }
+    
+    public void bubbleSortWeb(List<Website> web) {
+        for (int i = 0; i < web.size() - 1; i++) {
+            for (int j = 0; j < web.size() - i - 1; j++) {
+                if (web.get(j).getId() > web.get(j + 1).getId()) {
+                    Website temp = web.get(j);
+                    web.set(j, web.get(j + 1));
+                    web.set(j + 1, temp);
+                }
+            }
+        }
+    }
 
     /**
      * Método principal : É dado um URL inicial e a partir dele são adicionados
@@ -490,13 +502,13 @@ public class WebCrawler {
         return sites;
     }
     
-    public List<Vertex<Website>> getAdjacentsElem(Website w) {
+    public List<Website> getAdjacentsElem(Website w) {
         Vertex<Website> vertexWeb = getVertex(w);
-        List<Vertex<Website>> sites = new ArrayList<>();
+        List<Website> sites = new ArrayList<>();
 
         for (Edge<Link, Website> link : digraph.incidentEdges(vertexWeb)) {
             Vertex<Website> web2 = digraph.opposite(vertexWeb, link);
-            sites.add(web2);
+            sites.add(web2.element());
         }
         return sites;
     }

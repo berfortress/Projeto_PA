@@ -21,12 +21,12 @@ import models.Website;
  *
  * @author fabio
  */
-public class wcJsonDAO implements wcDAO{
+public class WcJsonDAO implements WcDAO{
     
     private String basePath;
     private static final String fileName = "webCrawlerJson.json";
 
-    public wcJsonDAO(String basePath) {
+    public WcJsonDAO(String basePath) {
         this.basePath = basePath;
     }
 
@@ -57,7 +57,7 @@ public class wcJsonDAO implements wcDAO{
             writer.flush();
             writer.close();
         } catch (IOException ex) {
-            Logger.getLogger(wcJsonDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WcJsonDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
