@@ -28,6 +28,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException, WebsiteException, LinkException {
         WcDAO dao = WcDAOFactory.createWcDAO("onejson", "./");
+//        Logger logger = Logger.
         
         System.out.println("=====================================================");
         System.out.println("\t\t     WELCOME");
@@ -91,6 +92,11 @@ public class Main {
                     String url = myObj.next();
                     
                     Iterative wc = new Iterative();
+                    wc.executeIterative(url);
+                    
+                    if (!wc.getLinksVisited().isEmpty()) {
+                        System.out.println(wc.toString());
+                    }
                     
                     for (Website p : wc.webSitesVisited()) {
                         dao.saveWC(p);

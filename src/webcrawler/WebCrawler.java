@@ -526,7 +526,8 @@ public class WebCrawler {
         while (webSitesVisited.size() <= getMaxPagesToSearch()) {
             openUrlAndShowTitleAndLinks(linksToVisit.get(count).getLink());
             bubbleSort(linksToVisit);
-            addEdge(web.element(), webSitesVisited.get(count), linksToVisit.get(count));
+            if(count < webSitesVisited.size() && count < linksToVisit.size())
+                addEdge(web.element(), webSitesVisited.get(count), linksToVisit.get(count));
             count++;
         }
 
@@ -535,7 +536,6 @@ public class WebCrawler {
         System.out.println("TEST 2 : " + webSitesVisited);
         System.out.println("VERTEXSS : " + digraph.vertices());
 
-//        webSitesVisited.clear();
         visited.add(web);
         queue.add(web);
         int c = 0;

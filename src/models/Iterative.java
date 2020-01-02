@@ -55,7 +55,8 @@ public class Iterative extends WebCrawler {
         while (websites.size() <= 8) {
             openUrlAndShowTitleAndLinks(links.get(count).getLink());
             bubbleSort(links);
-            addEdge(web, websites.get(count), links.get(count));
+            if(count < websites.size() && count < links.size())
+                addEdge(web, websites.get(count), links.get(count));
             count++;
         }
 
