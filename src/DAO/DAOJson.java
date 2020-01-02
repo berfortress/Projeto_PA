@@ -21,12 +21,12 @@ import models.Website;
  *
  * @author fabio
  */
-public class WcJsonDAO implements WcDAO{
+public class DAOJson implements DAO{
     
-    private String basePath;
+    private final String basePath;
     private static final String fileName = "webCrawlerJson.json";
 
-    public WcJsonDAO(String basePath) {
+    public DAOJson(String basePath) {
         this.basePath = basePath;
     }
 
@@ -46,6 +46,7 @@ public class WcJsonDAO implements WcDAO{
       
     }
 
+    @Override
     public void saveWC(Website wc) {
         FileWriter writer = null;
         try {
@@ -57,10 +58,11 @@ public class WcJsonDAO implements WcDAO{
             writer.flush();
             writer.close();
         } catch (IOException ex) {
-            Logger.getLogger(WcJsonDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DAOJson.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    @Override
     public Website loadWC(String pageTitleName) {
         HashSet<Website> list = selectAll();
         for (Website p : list) {   

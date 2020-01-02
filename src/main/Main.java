@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 package main;
-import DAO.WcJsonDAO;
-import DAO.WcSerializationDAO;
-import DAO.WcDAOFactory;
+import DAO.DAOJson;
+import DAO.DAOSerialization;
+import DAO.DAOFactory;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,7 +16,7 @@ import java.util.Scanner;
 import models.Iterative;
 import models.Website;
 import webcrawler.WebCrawler;
-import DAO.WcDAO;
+import DAO.DAO;
 
 /**
  *
@@ -27,7 +27,7 @@ public class Main {
     
 
     public static void main(String[] args) throws IOException, WebsiteException, LinkException {
-        WcDAO dao = WcDAOFactory.createWcDAO("onejson", "./");
+        DAO dao = DAOFactory.createDAO("onejson", "./");
         
         System.out.println("=====================================================");
         System.out.println("\t\t     WELCOME");

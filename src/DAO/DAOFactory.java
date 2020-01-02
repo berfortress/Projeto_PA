@@ -9,12 +9,12 @@ package DAO;
  *
  * @author fabio
  */
-public class WcDAOFactory {
-    public static WcDAO createWcDAO(String type, String basePath){
+public class DAOFactory {
+    public static DAO createDAO(String type, String basePath){
         switch(type){
-            case "serialization": return new WcSerializationDAO(basePath);
-            case "onejson": return new WcJsonDAO(basePath);
-            case "file": return new WcDAOFile(basePath);
+            case "serialization": return new DAOSerialization(basePath);
+            case "onejson": return new DAOJson(basePath);
+            case "file": return new DAOFile(basePath);
             default: throw new IllegalArgumentException("Este tipo não existe");
         }
     }

@@ -8,10 +8,8 @@ package webcrawler;
 import adtgraph.Digraph;
 import adtgraph.Edge;
 import adtgraph.GraphEdgeList;
-import adtgraph.InvalidEdgeException;
 import adtgraph.InvalidVertexException;
 import adtgraph.Vertex;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -228,7 +226,7 @@ public class WebCrawler {
      */
     @Override
     public String toString() {
-        String str = "\n\nWEB CRAWLER (" + digraph.numVertices() + " pagesTitles | " + digraph.numEdges() + " links) \n";
+        String str = "WEB CRAWLER (" + digraph.numVertices() + " pagesTitles | " + digraph.numEdges() + " links) \n";
         for (Vertex<Website> a1 : digraph.vertices()) {
             for (Vertex<Website> a2 : digraph.vertices()) {
                 if (a1.equals(a2)) {
@@ -454,43 +452,6 @@ public class WebCrawler {
         }
     }
 
-    /**
-     * Método principal : É dado um URL inicial e a partir dele são adicionados
-     * na lista de links não visitados os links que foram encontrados no URL
-     * passado por parâmetro, se a lista de links não visitados estiver vazia é
-     * enviado um print a informar que a página não contém links,senão ele
-     * percorre sempre em medida do número máximo de páginas que definimos. Cria
-     * um vértice com informação do link da posição zero dos links não visitados
-     * e depois disso é removido fazendo isto até ao critério de paragem ser
-     * cumprido.
-     *
-     * @param url
-     * @throws IOException
-     * @throws WebsiteException
-     * @throws LinkException
-     */
-    public void search(String url) throws IOException, WebsiteException, LinkException {
-        openUrlAndShowTitleAndLinks(url);
-
-        Website s1 = site;
-        if (linksToVisit.isEmpty()) {
-            System.out.println("**** SORRY BUT THE PAGE " + webSitesVisited.get(0).getWebsiteName() + " DONT HAVE ANY URL. **** \n \n");
-        } else {
-            int count = 1;
-            while (webSitesVisited.size() <= getMaxPagesToSearch()) {
-                openUrlAndShowTitleAndLinks(linksToVisit.get(count).getLink());
-//                Set<Link> newList = new HashSet(linksToVisit);
-//                List<Link> newList1 = new ArrayList(newList);
-//                linksToVisit = newList1;
-                bubbleSort(linksToVisit);
-                addEdge(s1, webSitesVisited.get(count), linksToVisit.get(count));
-                count++;
-                //addRelation(number++);
-            }
-        }
-
-    }
-
     public List<Vertex<Website>> getAdjacents(Vertex<Website> w) {
 
         List<Vertex<Website>> sites = new ArrayList<>();
@@ -514,14 +475,14 @@ public class WebCrawler {
     }
 
     public void automatic(String url) throws IOException, WebsiteException, LinkException {
-//        List<Vertex<Website>> vertexList = 
         openUrlAndShowTitleAndLinks(url);
 
-        List<Link> linksList = new ArrayList<>();
         Set<Vertex<Website>> visited = new HashSet<>();
         Queue<Vertex<Website>> queue = new LinkedList<>();
         Vertex<Website> web = getVertex(site);
-
+        if (linksToVisit.isEmpty()) {
+            System.out.println("\n**** SORRY BUT THE PAGE " + webSitesVisited.get(0).getWebsiteName() + " DONT HAVE ANY URL. **** \n");
+        }else{
         int count = 1;
         while (webSitesVisited.size() <= getMaxPagesToSearch()) {
             openUrlAndShowTitleAndLinks(linksToVisit.get(count).getLink());
@@ -529,13 +490,7 @@ public class WebCrawler {
             addEdge(web.element(), webSitesVisited.get(count), linksToVisit.get(count));
             count++;
         }
-
-        System.out.println("VERTEX : " + web);
-        System.out.println("TEST 1 : " + linksToVisit);
-        System.out.println("TEST 2 : " + webSitesVisited);
-        System.out.println("VERTEXSS : " + digraph.vertices());
-
-//        webSitesVisited.clear();
+        }
         visited.add(web);
         queue.add(web);
         int c = 0;
@@ -565,8 +520,5 @@ public class WebCrawler {
             c++;
         }
 
-        System.out.println("List : " + visited.toString());
-        System.out.println("\nADJACENT : " + getAdjacents(web));
-        System.out.println("TEST : " + linksList);
     }
 }
