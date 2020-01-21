@@ -5,14 +5,13 @@
  */
 package DAO;
 
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.Website;
@@ -23,76 +22,85 @@ import models.Website;
  */
 public class DAOSerialization implements DAO {
 
-    public static final String FILENAME = "webCrawlerSerialization.";
+    public static final String FILENAME = "webCrawlerSerialization.dat";
     private String basePath;
 
-    private List<Website> inMemory;
+    private HashSet<Website> inMemory;
 
+    /**
+     * Construtor da classe DAOSerialization
+     * @param basePath 
+     */
     public DAOSerialization(String basePath) {
         this.basePath = basePath;
-        inMemory = new ArrayList<>();
+        inMemory = new HashSet<>();
         loadFile();
     }
 
-    /*
-    Save imMemory list to file
+
+    /**
+     * Método que guarda o ficheiro em memória
      */
     private void saveFile() {
+        FileOutputStream fileOut = null;
         try {
-            FileOutputStream fileOut = new FileOutputStream(basePath + FILENAME);
+            fileOut = new FileOutputStream(basePath + FILENAME);
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
 
             out.writeObject(inMemory);
             out.close();
 
             fileOut.close();
+        } catch (FileNotFoundException e) {
+            Logger.getLogger(DAOSerialization.class.getName()).log(Level.SEVERE, null, e);
+
         } catch (IOException e) {
             Logger.getLogger(DAOSerialization.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
+    /**
+     * Método que lê
+     */
     private void loadFile() {
+        FileInputStream fileIn = null;
         try {
-            File f = new File(FILENAME);
-            if (!f.exists()) {
-                inMemory = new ArrayList<>();
-                return;
-            }
-
-            FileInputStream fileIn = new FileInputStream(FILENAME);
+            fileIn = new FileInputStream(basePath + FILENAME);
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            inMemory = (List<Website>) in.readObject();
+            this.inMemory = (HashSet<Website>) in.readObject();
             in.close();
             fileIn.close();
         } catch (IOException e) {
-            Logger.getLogger(DAOSerialization.class.getName()).log(Level.SEVERE, null, e);
+            return ; 
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DAOSerialization.class.getName()).log(Level.SEVERE, null, ex);
+            return ;
         }
     }
 
+    /**
+     * Método guarda website
+     * @param wc 
+     */
     @Override
     public void saveWC(Website wc) {
-        int index = -1;
-        for (int i = 0; i < inMemory.size(); i++) {
-            if (inMemory.get(i).getId() == wc.getId()) {
-                index = i;
-            }
+        if (inMemory.contains(wc)) {
+            return;
         }
 
-        if (index != -1) {
-            inMemory.set(index, wc);
-        } else {
-            inMemory.add(wc);
-        }
+        inMemory.add(wc);
 
         saveFile();
     }
 
+     /**
+     * Método que retorna website dado um webSiteName
+     * @param webSiteName
+     * @return 
+     */
     @Override
-    public Website loadWC(String pageTitleName) {
+    public Website loadWC(String webSiteName) {
         for (Website web : inMemory) {
-            if (web.getWebsiteName().compareToIgnoreCase(pageTitleName) == 0) {
+            if (web.getWebsiteName().compareToIgnoreCase(webSiteName) == 0) {
                 return web;
             }
         }
@@ -100,70 +108,40 @@ public class DAOSerialization implements DAO {
         return null;
     }
 
-    public List<Website> readAll() {
+    /**
+     * Método que seleciona todos os websites
+     * @return 
+     */
+    public HashSet<Website> selectAll() {
         return inMemory;
     }
 
-    public boolean delete(String pageTitleName) {
-
-        int index = -1;
-        for (int i = 0; i < inMemory.size(); i++) {
-            if (inMemory.get(i).getWebsiteName().compareToIgnoreCase(pageTitleName) == 0) {
-                index = i;
-            }
-        }
-
-        if (index != -1) {
-            inMemory.remove(index);
-            saveFile();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public List<Website> selectAll() {
-        return inMemory;
-    }
-
-    public Website select(String pageTitleName) {
+    /**
+     * Método que retorna um website dada um webSiteName
+     * @param webSiteName
+     * @return 
+     */
+    public Website select(String webSiteName) {
         for (Website web : inMemory) {
-            if (web.getWebsiteName().equals(pageTitleName)) {
+            if (web.getWebsiteName().equals(webSiteName)) {
                 return web;
             }
         }
         return null;
     }
 
-    public boolean insert(Website web) {
+    /**
+     * Méotodo que remove da lista dado um webSiteName
+     * @param webSiteName
+     * @return 
+     */
+    public boolean remove(String webSiteName) {
         for (Website w : inMemory) {
-            if (w.getWebsiteName().equals(web.getWebsiteName())) {
-                return false;
-            }
-        }
-
-        inMemory.add(web);
-        saveFile();
-        return true;
-    }
-
-    public boolean remove(String pageTitleName) {
-        for (Website w : inMemory) {
-            if (w.getWebsiteName().equals(pageTitleName)) {
+            if (w.getWebsiteName().equals(webSiteName)) {
                 inMemory.remove(w);
                 return true;
             }
         }
         return false;
     }
-
-//    public boolean updateWebsite() {
-//        for (Website w : inMemory) {
-//            if (w.getStudentCode().equals(studentCode)) {
-//                w.setStudentGrade(newGrade);
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 }

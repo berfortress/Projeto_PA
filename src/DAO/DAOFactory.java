@@ -10,6 +10,13 @@ package DAO;
  * @author fabio e bernardo
  */
 public class DAOFactory {
+    
+    /**
+     * DAOFactory
+     * @param type
+     * @param basePath
+     * @return 
+     */
     public static DAO createDAO(String type, String basePath){
         switch(type){
             case "serialization": return new DAOSerialization(basePath);

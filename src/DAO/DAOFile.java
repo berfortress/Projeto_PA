@@ -22,10 +22,18 @@ public class DAOFile implements DAO{
     
     private String basePath;
 
+    /**
+     * Construtor da classe DAOFile
+     * @param basePath 
+     */
     public DAOFile(String basePath) {
         this.basePath = basePath;
     }
 
+    /**
+     * Método guarda website
+     * @param wc 
+     */
     @Override
     public void saveWC(Website wc) {
         FileWriter fw = null;
@@ -45,10 +53,16 @@ public class DAOFile implements DAO{
         }
     }
 
-    public Website loadWC(String pageTitleName) {
+    /**
+     * Método que retorna website dado um webSiteName
+     * @param webSiteName
+     * @return 
+     */
+    @Override
+    public Website loadWC(String webSiteName) {
         Scanner sc = null;
         try {
-            sc = new Scanner(new File(basePath + pageTitleName + ".Webcrawler"));
+            sc = new Scanner(new File(basePath + webSiteName + ".Webcrawler"));
             Website wc = new Website();
             String rTitle = sc.nextLine();
             String rURL = sc.nextLine();

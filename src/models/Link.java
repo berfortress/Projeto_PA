@@ -5,14 +5,14 @@
  */
 package models;
 
-import java.util.Objects;
+import java.io.Serializable;
 
 /**
  *
  * @author fabio e bernardo
  */
 
-public class Link {
+public class Link implements Serializable {
     private int id = 0;
     private static int count = 0; 
     private final double distance;
@@ -20,7 +20,7 @@ public class Link {
     private String link;
     
     /**
-     * Construtor da classe Hyperlinks
+     * Construtor da classe Link
      * @param description
      * @param link 
      */
@@ -34,7 +34,7 @@ public class Link {
 
     
     /**
-     * Construtor da classe Hyperlinks
+     * Construtor da classe Link
      */
     public Link() {
         this.id = ++count;
@@ -70,7 +70,7 @@ public class Link {
 
     /**
      * Altera a descrição do link
-     * @param name 
+     * @param description
      */
     public void setDescription(String description) {
         this.description = description;

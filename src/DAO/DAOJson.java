@@ -26,10 +26,18 @@ public class DAOJson implements DAO{
     private String basePath;
     private static final String fileName = "webCrawlerJson.json";
 
+    /**
+     * Construtor da classe DAOJson
+     * @param basePath 
+     */
     public DAOJson(String basePath) {
         this.basePath = basePath;
     }
-
+    
+    /**
+     * Método que seleciona tudo
+     * @return 
+     */
     private HashSet<Website> selectAll() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(basePath + fileName));
@@ -43,9 +51,13 @@ public class DAOJson implements DAO{
         } catch (IOException ex) {
             return new HashSet<>(); 
         }
-      
     }
-
+    
+    /**
+     * Método guarda website
+     * @param wc 
+     */
+    @Override
     public void saveWC(Website wc) {
         FileWriter writer = null;
         try {
@@ -61,10 +73,16 @@ public class DAOJson implements DAO{
         }
     }
 
-    public Website loadWC(String pageTitleName) {
+    /**
+     * Método que retorna website dado um webSiteName
+     * @param webSiteName
+     * @return 
+     */
+    @Override
+    public Website loadWC(String webSiteName) {
         HashSet<Website> list = selectAll();
         for (Website p : list) {   
-            if (p.getWebsiteName().equalsIgnoreCase(pageTitleName)) {
+            if (p.getWebsiteName().equalsIgnoreCase(webSiteName)) {
                 return p;
             }
         }

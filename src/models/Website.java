@@ -6,121 +6,155 @@
 package models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  *
  * @author fabio e bernardo
  */
+public class Website implements Serializable {
 
-public class Website implements Serializable{
     private int id = 0;
     private static int count = 0;
     private String name;
     private String url;
-    private Link link;
+    private List<Link> links;
 
     /**
-     * Construtor da Página
-     * @param pageTitleName
-     * @param pageAddress 
+     * Construtor da classe Website
+     *
+     * @param name
+     * @param url
      */
     public Website(String name, String url) {
         this.id = ++count;
         this.name = name;
         this.url = url;
-        this.link = null;
-    }  
-    
+        this.links = new ArrayList<>();
+    }
+
+    /**
+     * Construtor da classe Website
+     *
+     * @param web
+     */
     public Website(Website web) {
         this.id = web.getId();
         this.name = web.getWebsiteName();
         this.url = web.getURL();
-        this.link = web.getLink();
+        this.links = web.getLinks();
     }
 
     /**
-     * Construtor da Página
+     * Construtor da classe Website
      */
     public Website() {
         this.id = ++count;
         this.name = "";
         this.url = "";
-        link = null;
+        this.links = new ArrayList<>();
+    }
+
+    /**
+     * Método que coloca link ao website
+     *
+     * @param h
+     */
+    public void addLink(Link h) {
+        links.add(h);
+    }
+
+    public void removeLink(Link h) {
+        links.remove(h);
+    }
+
+    /**
+     * Método que retorna o link do website
+     *
+     * @return
+     */
+    public List<Link> getLinks() {
+        return links;
+    }
+
+    public String getLinkDescription(int id) {
+        return links.get(id).getLink();
+    }
+
+    public Link getLink(int id) {
+        return links.get(id);
     }
     
-    /**
-     * Método que adiciona links a uma página específica.
-     * @param h 
-     */
-    public void addLink(Link h){
-        link = new Link(h.getDescription(), h.getLink());
+    public int getLinksSize(){
+        return links.size();
     }
 
     /**
-     * Método que retorna uma lista de links de uma página.
-     * @return 
-     */
-    public Link getLink() {
-        return link;
-    }
-
-    /**
-     * Retorna o nome da página.
-     * @return 
+     * Retorna o nome do website.
+     *
+     * @return
      */
     public String getWebsiteName() {
         return name;
     }
 
     /**
-     * Retorna o URL da página.
-     * @return 
+     * Retorna o URL do website
+     *
+     * @return
      */
     public String getURL() {
         return url;
     }
 
     /**
-     * Altera o URL da página.
-     * @param pageAddress 
+     * Altera o URL do website
+     *
+     * @param url
      */
     public void setURL(String url) {
         this.url = url;
     }
-    
+
     /**
-     * Altera o nome da página.
-     * @param pageTitleName 
+     * Altera o nome do website.
+     *
+     * @param name
      */
     public void setWebsiteName(String name) {
         this.name = name;
     }
 
     /**
-     * Retorna o id da página.
-     * @return 
+     * Retorna o id do website.
+     *
+     * @return
      */
     public int getId() {
         return id;
     }
 
     /**
-     * Descrição do Website.
-     * @return 
+     * Descrição do website.
+     *
+     * @return
      */
     @Override
     public String toString() {
         return id + " [" + getWebsiteName() + "] " + getURL();
     }
-    
+
     /**
      * Equals
+     *
      * @param obj
-     * @return 
+     * @return
      */
     @Override
     public boolean equals(Object obj) {
-         if (this == obj) {
+        if (this == obj) {
             return true;
         }
         if (obj == null) {
@@ -132,6 +166,18 @@ public class Website implements Serializable{
         final Website other = (Website) obj;
         return this.id == other.getId();
     }
-    
-    
+
+    /**
+     * HashCode
+     *
+     * @return
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + this.id;
+        hash = 89 * hash + Objects.hashCode(this.name);
+        hash = 89 * hash + Objects.hashCode(this.url);
+        return hash;
+    }
 }

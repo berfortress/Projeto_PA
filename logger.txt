@@ -1,0 +1,30 @@
+Tue Jan 21 22:25:42 GMT 2020 | Class: javaFX_mainScreens.Main | action: Programa Inicializado
+Tue Jan 21 22:25:45 GMT 2020 | Class: javaFX_mainScreens.SecondWindow | action: Modelo Automático Escolhido
+Tue Jan 21 22:25:53 GMT 2020 | <A> | <http://www.brunomnsilva.com/sandbox/a.html> | <B> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <Same Title> | <http://www.brunomnsilva.com/sandbox/same2.html> | <B> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <Same Title> | <http://www.brunomnsilva.com/sandbox/same2.html> | <A> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <C> | <http://www.brunomnsilva.com/sandbox/c.html> | <B> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <C> | <http://www.brunomnsilva.com/sandbox/c.html> | <A> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <C> | <http://www.brunomnsilva.com/sandbox/c.html> | <Same Title> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <INDEX> | <http://www.brunomnsilva.com/sandbox/index.html> | <B> | <[2 [A] http://www.brunomnsilva.com/sandbox/a.html, 5 [D] http://www.brunomnsilva.com/sandbox/d.html, 3 [B] http://www.brunomnsilva.com/sandbox/b.html, 4 [C] http://www.brunomnsilva.com/sandbox/c.html, 6 [E] http://www.brunomnsilva.com/sandbox/e.html, 7 [Same Title] http://www.brunomnsilva.com/sandbox/same1.html, 8 [Same Title] http://www.brunomnsilva.com/sandbox/same2.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <INDEX> | <http://www.brunomnsilva.com/sandbox/index.html> | <A> | <[2 [A] http://www.brunomnsilva.com/sandbox/a.html, 5 [D] http://www.brunomnsilva.com/sandbox/d.html, 3 [B] http://www.brunomnsilva.com/sandbox/b.html, 4 [C] http://www.brunomnsilva.com/sandbox/c.html, 6 [E] http://www.brunomnsilva.com/sandbox/e.html, 7 [Same Title] http://www.brunomnsilva.com/sandbox/same1.html, 8 [Same Title] http://www.brunomnsilva.com/sandbox/same2.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <INDEX> | <http://www.brunomnsilva.com/sandbox/index.html> | <Same Title> | <[2 [A] http://www.brunomnsilva.com/sandbox/a.html, 5 [D] http://www.brunomnsilva.com/sandbox/d.html, 3 [B] http://www.brunomnsilva.com/sandbox/b.html, 4 [C] http://www.brunomnsilva.com/sandbox/c.html, 6 [E] http://www.brunomnsilva.com/sandbox/e.html, 7 [Same Title] http://www.brunomnsilva.com/sandbox/same1.html, 8 [Same Title] http://www.brunomnsilva.com/sandbox/same2.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <INDEX> | <http://www.brunomnsilva.com/sandbox/index.html> | <C> | <[2 [A] http://www.brunomnsilva.com/sandbox/a.html, 5 [D] http://www.brunomnsilva.com/sandbox/d.html, 3 [B] http://www.brunomnsilva.com/sandbox/b.html, 4 [C] http://www.brunomnsilva.com/sandbox/c.html, 6 [E] http://www.brunomnsilva.com/sandbox/e.html, 7 [Same Title] http://www.brunomnsilva.com/sandbox/same1.html, 8 [Same Title] http://www.brunomnsilva.com/sandbox/same2.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <Same Title> | <http://www.brunomnsilva.com/sandbox/same1.html> | <B> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <Same Title> | <http://www.brunomnsilva.com/sandbox/same1.html> | <A> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <Same Title> | <http://www.brunomnsilva.com/sandbox/same1.html> | <Same Title> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <Same Title> | <http://www.brunomnsilva.com/sandbox/same1.html> | <C> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <Same Title> | <http://www.brunomnsilva.com/sandbox/same1.html> | <INDEX> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <D> | <http://www.brunomnsilva.com/sandbox/d.html> | <B> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <D> | <http://www.brunomnsilva.com/sandbox/d.html> | <A> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <D> | <http://www.brunomnsilva.com/sandbox/d.html> | <Same Title> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <D> | <http://www.brunomnsilva.com/sandbox/d.html> | <C> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <D> | <http://www.brunomnsilva.com/sandbox/d.html> | <INDEX> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <D> | <http://www.brunomnsilva.com/sandbox/d.html> | <Same Title> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <E> | <http://www.brunomnsilva.com/sandbox/e.html> | <B> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <E> | <http://www.brunomnsilva.com/sandbox/e.html> | <A> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <E> | <http://www.brunomnsilva.com/sandbox/e.html> | <Same Title> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <E> | <http://www.brunomnsilva.com/sandbox/e.html> | <C> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <E> | <http://www.brunomnsilva.com/sandbox/e.html> | <INDEX> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <E> | <http://www.brunomnsilva.com/sandbox/e.html> | <Same Title> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
+Tue Jan 21 22:25:53 GMT 2020 | <E> | <http://www.brunomnsilva.com/sandbox/e.html> | <D> | <[1 [INDEX] http://www.brunomnsilva.com/sandbox/index.html]>
